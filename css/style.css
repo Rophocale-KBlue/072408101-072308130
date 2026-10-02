@@ -153,12 +153,22 @@ body {
       height: 80px;
       border-radius: 14px;
       background-color: #eef3fc;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" rx="14" fill="%23d9e6f5"/><text x="40" y="46" font-family="system-ui, sans-serif" font-size="12" fill="%236480a8" text-anchor="middle">80x80</text></svg>');
       background-size: cover;
       background-position: center;
       flex-shrink: 0;
       margin-right: 14px;
       border: 1px solid #e0e9f2;
+      overflow: hidden;
+      position: relative;
+    }
+    .item-image, .item-image-placeholder, .detail-image {
+      overflow: hidden;
+    }
+    .item-image-real {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 #view-home .item-content {
       flex: 1;
@@ -3702,3 +3712,439 @@ body {
     width: 100%;
     max-height: none;
   }}
+
+/* ===================== 桌面端布局 ===================== */
+html,
+body {
+  background-color: #f5f7fb;
+}
+
+body {
+  display: block;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+  width: auto;
+  min-height: 0;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #eef2f6;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+}
+
+.site-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e2b3a;
+  letter-spacing: 0.5px;
+}
+
+.site-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.site-nav .nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.site-nav .nav-btn:hover {
+  background: #f1f5f9;
+  color: #1e3a8a;
+}
+
+.site-nav .nav-btn.active {
+  background: #1e3a8a;
+  color: #ffffff;
+}
+
+.site-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+.view-inner {
+  width: 100%;
+}
+
+/* ===== 首页 ===== */
+#view-home .hero-section {
+  height: 320px;
+  border-radius: 24px;
+  margin-bottom: 24px;
+  background-color: #dbeafe;
+  background-image: url('../assets/fzu-campus.jpg'), linear-gradient(120deg, #dbeafe 0%, #eef3fc 55%, #d9e6f5 100%);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.14);
+}
+
+#view-home .hero-title {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e3a8a;
+  font-size: 30px;
+  padding: 12px 30px;
+}
+
+#view-home .search-section {
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+#view-home .search-box {
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
+  cursor: pointer;
+}
+
+#view-home .search-icon {
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+#view-home .search-placeholder {
+  font-size: 15px;
+}
+
+.home-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.home-filter {
+  padding: 8px 18px;
+  border: 1px solid #e3e8ef;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #5e6f88;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.home-filter:hover {
+  border-color: #f5a34a;
+  color: #e8872e;
+}
+
+.home-filter.active {
+  background: linear-gradient(135deg, #f5a34a, #e8872e);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 5px 12px rgba(237, 125, 50, 0.2);
+}
+
+.home-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.home-column {
+  min-width: 0;
+}
+
+.home-column-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 19px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.home-column-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.home-column-dot.lost {
+  background: #e8872e;
+  box-shadow: 0 0 0 4px rgba(232, 135, 46, 0.15);
+}
+
+.home-column-dot.found {
+  background: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.home-column-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#view-home .list-item {
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 20px;
+  min-height: 100%;
+}
+
+#view-home .item-image-placeholder {
+  width: 100%;
+  height: 190px;
+  margin: 0 0 14px 0;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-size: cover;
+}
+
+.home-column:nth-child(1) .item-image-placeholder {
+  background: linear-gradient(135deg, #fff4e8, #fde3cc);
+}
+
+.home-column:nth-child(2) .item-image-placeholder {
+  background: linear-gradient(135deg, #eef4ff, #dbeafe);
+}
+
+.item-image-emoji {
+  font-size: 58px;
+  line-height: 1;
+}
+
+.item-image-name {
+  max-width: 88%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#view-home .item-content {
+  padding-bottom: 0;
+}
+
+#view-home .row-first {
+  gap: 8px;
+}
+
+#view-home .tag-item-type {
+  margin-right: 0;
+  transform: none;
+}
+
+#view-home .item-name {
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+#view-home .detail-link {
+  position: static;
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* ===== 发布页 ===== */
+#view-publish .view-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+#view-publish .page-header {
+  background: none;
+  padding: 8px 0 20px;
+}
+
+#view-publish .page-header::after {
+  display: none;
+}
+
+#view-publish .page-title {
+  font-size: 28px;
+}
+
+#view-publish .page-subtitle {
+  font-size: 14px;
+}
+
+#view-publish .publish-content {
+  padding: 0 0 32px;
+  overflow: visible;
+}
+
+#view-publish .publish-content.lost-mode,
+#view-publish .publish-content.found-mode {
+  background: none;
+}
+
+/* ===== 详情页两栏布局 ===== */
+#view-detail .view-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+}
+
+#view-detail .top-bar {
+  grid-column: 1 / -1;
+  height: auto;
+  min-height: 58px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+}
+
+#view-detail .detail-scroll {
+  display: contents;
+}
+
+#view-detail .detail-image {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  height: 520px;
+  border-radius: 20px;
+}
+
+#view-detail .detail-content {
+  grid-column: 2;
+  grid-row: 2;
+  padding: 0;
+}
+
+#view-detail .bottom-action {
+  grid-column: 2;
+  grid-row: 3;
+  position: static;
+  height: auto;
+  padding: 16px 0 0;
+  background: transparent;
+  border-top: none;
+  box-shadow: none;
+}
+
+#view-detail .modal-mask {
+  position: fixed;
+  inset: 0;
+}
+
+/* ===== 我的页 ===== */
+#view-mine .profile-section {
+  border-radius: 20px;
+  padding: 32px 30px;
+  margin-bottom: 24px;
+}
+
+#view-mine .menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#view-mine .section-title {
+  width: 100%;
+}
+
+#view-mine .menu-item {
+  border: 1px solid #edf2f9;
+  border-radius: 16px;
+}
+
+/* ===== 通用子页面 ===== */
+#view-myLost .page-header,
+#view-myFound .page-header,
+#view-search .page-header,
+#view-publishSuccess .page-header,
+#view-publishFailure .page-header {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+#view-myLost .page-header::after,
+#view-myFound .page-header::after,
+#view-search .page-header::after,
+#view-publishSuccess .page-header::after,
+#view-publishFailure .page-header::after {
+  display: none;
+}
+
+#view-myLost .scroll-panel,
+#view-myFound .scroll-panel,
+#view-search .scroll-panel {
+  overflow: visible;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#view-favorites .top-bar,
+#view-profile .top-bar {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+#view-publishSuccess .result-content,
+#view-publishFailure .result-content {
+  max-width: 640px;
+  margin: 0 auto;
+}

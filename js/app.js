@@ -26,6 +26,7 @@
 
   var detailFavorite = false;
   var searchCategory = '全部';
+  var homeCategory = '全部';
 
   function $(selector, root) {
     return (root || document).querySelector(selector);
@@ -99,7 +100,7 @@
     return item || {
       type: 'lost',
       category: '校园卡',
-      emoji: '💳',
+      image: 'images/campus-card.jpg',
       title: '蓝色校园卡',
       location: '图书馆三楼',
       time: '2026-09-28 14:30',
@@ -131,7 +132,9 @@
     var favoriteIcon = $('#favoriteIcon', view);
     var favoriteText = $('#favoriteText', view);
 
-    if (image) image.textContent = item.emoji;
+    if (image) {
+      image.innerHTML = '<img class="item-image-real" src="' + item.image + '" alt="' + item.title + '">';
+    }
     if (status) {
       status.textContent = isFound ? '招领' : '寻物';
       status.classList.toggle('found', isFound);
@@ -155,17 +158,23 @@
   }
 
   function renderHomeList() {
-    var list = $('#homeList');
-    if (!list) return;
+    var lostList = $('#homeLostList');
+    var foundList = $('#homeFoundList');
+    if (!lostList && !foundList) return;
 
     var store = window.LostFoundStore;
     if (!store || typeof store.getItems !== 'function') {
-      list.innerHTML = '';
+      if (lostList) lostList.innerHTML = '';
+      if (foundList) foundList.innerHTML = '';
       return;
     }
 
     var activeStatus = store.STATUSES ? store.STATUSES.ACTIVE : '进行中';
-    var items = store.filterItems(store.getItems(), { status: activeStatus });
+    var filters = { status: activeStatus };
+    if (homeCategory && homeCategory !== '全部') {
+      filters.category = homeCategory;
+    }
+    var items = store.filterItems(store.getItems(), filters);
 
     items.sort(function (a, b) {
       var timeA = a.time || a.createdAt || '';
@@ -174,7 +183,22 @@
       return timeA > timeB ? -1 : 1;
     });
 
-    list.innerHTML = items.map(function (item) {
+    var lostItems = items.filter(function (item) {
+      return item.type !== '招领';
+    });
+    var foundItems = items.filter(function (item) {
+      return item.type === '招领';
+    });
+
+    if (lostList) {
+      lostList.innerHTML = lostItems.map(homeCardHtml).join('');
+    }
+    if (foundList) {
+      foundList.innerHTML = foundItems.map(homeCardHtml).join('');
+    }
+  }
+
+  function homeCardHtml(item) {
       var id = escapeHtml(item.id);
       var typeClass = item.type === '招领' ? 'found' : 'lost';
       var typeLabel = escapeHtml(item.type === '招领' ? '招领' : '寻物');
@@ -182,10 +206,14 @@
       var name = escapeHtml(item.name);
       var time = escapeHtml(item.time);
       var location = escapeHtml(item.location);
+      var image = homeCategoryImage(item.category);
 
       return (
         '<div class="list-item" onclick="goToDetail(\'' + id + '\')">' +
-          '<div class="item-image-placeholder"></div>' +
+          '<div class="item-image-placeholder">' +
+            '<img class="item-image-real" src="' + image + '" alt="' + name + '">' +
+            '<span class="item-image-name">' + name + '</span>' +
+          '</div>' +
           '<div class="item-content">' +
             '<div class="row-first">' +
               '<span class="tag-status ' + typeClass + '">' + typeLabel + '</span>' +
@@ -198,8 +226,34 @@
           '</div>' +
         '</div>'
       );
-    }).join('');
   }
+
+  function homeCategoryImage(category) {
+    var map = {
+      '校园卡': 'images/campus-card.jpg',
+      '钥匙': 'images/keys.jpg',
+      '水杯': 'images/water-bottle.jpg',
+      '雨伞': 'images/umbrella.jpg',
+      '耳机': 'images/earphones.jpg',
+      '书籍': 'images/books.jpg',
+      '其他': 'images/backpack.jpg'
+    };
+    return map[category] || 'images/backpack.jpg';
+  }
+
+  window.filterHomeCategory = function (category, button) {
+    homeCategory = category || '全部';
+    var view = getView('home');
+
+    $$('.home-filter', view).forEach(function (item) {
+      item.classList.remove('active');
+    });
+    if (button) {
+      button.classList.add('active');
+    }
+
+    renderHomeList();
+  };
 
   function renderRoute() {
     var route = parseHash();

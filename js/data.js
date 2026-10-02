@@ -49,14 +49,14 @@
   var TYPE_VALUES = [TYPES.LOST, TYPES.FOUND];
   var STATUS_VALUES = [STATUSES.ACTIVE, STATUSES.FOUND, STATUSES.RETURNED];
 
-  var CATEGORY_EMOJI = {
-    '校园卡': '💳',
-    '钥匙': '🔑',
-    '水杯': '🥤',
-    '雨伞': '☂️',
-    '耳机': '🎧',
-    '书籍': '📚',
-    '其他': '📦'
+  var CATEGORY_IMAGE = {
+    '校园卡': 'images/campus-card.jpg',
+    '钥匙': 'images/keys.jpg',
+    '水杯': 'images/water-bottle.jpg',
+    '雨伞': 'images/umbrella.jpg',
+    '耳机': 'images/earphones.jpg',
+    '书籍': 'images/books.jpg',
+    '其他': 'images/backpack.jpg'
   };
 
   // 首次打开时写入的种子数据，覆盖所有类别和状态，方便浏览与搜索测试。
@@ -340,7 +340,7 @@
       id: record.id,
       type: isFound ? 'found' : 'lost',
       category: record.category,
-      emoji: CATEGORY_EMOJI[record.category] || CATEGORY_EMOJI['其他'],
+      image: CATEGORY_IMAGE[record.category] || CATEGORY_IMAGE['其他'],
       title: record.name,
       location: record.location,
       time: record.time,

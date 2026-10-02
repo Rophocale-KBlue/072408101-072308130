@@ -7,8 +7,20 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="logo" href="#home">校园失物招领</a>
+      <nav class="site-nav">
+        <a class="nav-btn" href="#home"><span>首页</span></a>
+        <a class="nav-btn" href="#publish"><span>发布</span></a>
+        <a class="nav-btn" href="#mine"><span>我的</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
   <section class="view" id="view-home" data-route="home">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="hero-section">
       <div class="hero-title">校园失物招领</div>
@@ -21,22 +33,32 @@
       </div>
     </div>
 
-    <div class="scroll-panel" id="homeList"></div>
+        <div class="home-filters">
+      <button class="home-filter active" data-category="全部" onclick="filterHomeCategory('全部', this)">全部</button>
+      <button class="home-filter" data-category="校园卡" onclick="filterHomeCategory('校园卡', this)">校园卡</button>
+      <button class="home-filter" data-category="钥匙" onclick="filterHomeCategory('钥匙', this)">钥匙</button>
+      <button class="home-filter" data-category="水杯" onclick="filterHomeCategory('水杯', this)">水杯</button>
+      <button class="home-filter" data-category="雨伞" onclick="filterHomeCategory('雨伞', this)">雨伞</button>
+      <button class="home-filter" data-category="耳机" onclick="filterHomeCategory('耳机', this)">耳机</button>
+      <button class="home-filter" data-category="书籍" onclick="filterHomeCategory('书籍', this)">书籍</button>
+      <button class="home-filter" data-category="其他" onclick="filterHomeCategory('其他', this)">其他</button>
+    </div>
 
-    <!-- 底部导航栏现在放在 phone-frame 内部，跟着容器走 -->
-    <div class="bottom-nav">
-      <button class="nav-btn active" onclick="location.href='#home'">
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-      </button>
-      <button class="nav-btn" onclick="location.href='#publish'">
-        <span class="nav-icon">➕</span>
-        <span>发布</span>
-      </button>
-      <button class="nav-btn" onclick="location.href='#mine'">
-        <span class="nav-icon">👤</span>
-        <span>我的</span>
-      </button>
+    <div class="home-columns">
+      <section class="home-column">
+        <div class="home-column-head">
+          <span class="home-column-dot lost"></span>
+          <span>寻物</span>
+        </div>
+        <div class="home-column-list" id="homeLostList"></div>
+      </section>
+      <section class="home-column">
+        <div class="home-column-head">
+          <span class="home-column-dot found"></span>
+          <span>招领</span>
+        </div>
+        <div class="home-column-list" id="homeFoundList"></div>
+      </section>
     </div>
 
   </div>
@@ -44,7 +66,7 @@
   
   </section>
   <section class="view" id="view-publish" data-route="publish">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="page-header">
       <div class="page-title">发布信息</div>
@@ -149,27 +171,14 @@
 
     </div>
 
-    <div class="bottom-nav">
-      <button class="nav-btn" onclick="location.href='#home'">
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-      </button>
-      <button class="nav-btn active" onclick="location.href='#publish'">
-        <span class="nav-icon">➕</span>
-        <span>发布</span>
-      </button>
-      <button class="nav-btn" onclick="location.href='#mine'">
-        <span class="nav-icon">👤</span>
-        <span>我的</span>
-      </button>
-    </div>
+    
 
   </div>
 
   
   </section>
   <section class="view" id="view-mine" data-route="mine">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="profile-section">
       <div class="profile-left">
@@ -238,27 +247,14 @@
 
     </div>
 
-    <div class="bottom-nav">
-      <button class="nav-btn" onclick="location.href='#home'">
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-      </button>
-      <button class="nav-btn" onclick="location.href='#publish'">
-        <span class="nav-icon">➕</span>
-        <span>发布</span>
-      </button>
-      <button class="nav-btn active" onclick="location.href='#mine'">
-        <span class="nav-icon">👤</span>
-        <span>我的</span>
-      </button>
-    </div>
+    
 
   </div>
 
   
   </section>
   <section class="view" id="view-publishSuccess" data-route="publishSuccess">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="page-header">
       <div class="page-title">发布信息</div>
@@ -289,25 +285,12 @@
       </div>
     </div>
 
-    <div class="bottom-nav">
-      <button class="nav-btn" onclick="window.location.hash='home'">
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-      </button>
-      <button class="nav-btn active" onclick="window.location.hash='publish'">
-        <span class="nav-icon">➕</span>
-        <span>发布</span>
-      </button>
-      <button class="nav-btn" onclick="window.location.hash='mine'">
-        <span class="nav-icon">👤</span>
-        <span>我的</span>
-      </button>
-    </div>
+    
 
   </div>
   </section>
   <section class="view" id="view-publishFailure" data-route="publishFailure">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="page-header">
       <div class="page-title">发布信息</div>
@@ -344,25 +327,12 @@
       </div>
     </div>
 
-    <div class="bottom-nav">
-      <button class="nav-btn" onclick="window.location.hash='home'">
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-      </button>
-      <button class="nav-btn active" onclick="window.location.hash='publish'">
-        <span class="nav-icon">➕</span>
-        <span>发布</span>
-      </button>
-      <button class="nav-btn" onclick="window.location.hash='mine'">
-        <span class="nav-icon">👤</span>
-        <span>我的</span>
-      </button>
-    </div>
+    
 
   </div>
   </section>
   <section class="view" id="view-myLost" data-route="myLost">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="page-header">
 
@@ -387,7 +357,7 @@
     <div class="scroll-panel">
 
       <div class="list-item" data-status="active" onclick="goToDetail('lost1')">
-        <div class="item-image">💳</div>
+        <div class="item-image"><img class="item-image-real" src="images/campus-card.jpg" alt="蓝色校园卡"></div>
 
         <div class="item-content">
 
@@ -426,7 +396,7 @@
 
       <div class="list-item" data-status="active" onclick="goToDetail('lost2')">
 
-        <div class="item-image">🎧</div>
+        <div class="item-image"><img class="item-image-real" src="images/earphones.jpg" alt="白色无线耳机"></div>
 
         <div class="item-content">
 
@@ -469,7 +439,7 @@
 
       <div class="list-item" data-status="done" onclick="goToDetail('lost3')">
 
-        <div class="item-image">🥤</div>
+        <div class="item-image"><img class="item-image-real" src="images/water-bottle.jpg" alt="深蓝色保温杯"></div>
 
         <div class="item-content">
 
@@ -523,38 +493,7 @@
     </div>
 
 
-    <div class="bottom-nav">
-
-      <button
-        class="nav-btn"
-        onclick="window.location.hash='#home'">
-
-        <span class="nav-icon">🏠</span>
-        <span>首页</span>
-
-      </button>
-
-
-      <button
-        class="nav-btn"
-        onclick="window.location.hash='#publish'">
-
-        <span class="nav-icon">➕</span>
-        <span>发布</span>
-
-      </button>
-
-
-      <button
-        class="nav-btn active"
-        onclick="window.location.hash='#mine'">
-
-        <span class="nav-icon">👤</span>
-        <span>我的</span>
-
-      </button>
-
-    </div>
+    
 
   </div>
 
@@ -562,7 +501,7 @@
   
   </section>
   <section class="view" id="view-myFound" data-route="myFound">
-<div class="phone-frame">
+<div class="view-inner">
 
   <!-- 顶部 -->
   <div class="page-header">
@@ -640,7 +579,7 @@
       onclick="goToDetail('found1')">
 
       <div class="item-image">
-        🔑
+        <img class="item-image-real" src="images/keys.jpg" alt="一串黑色钥匙">
       </div>
 
       <div class="item-content">
@@ -697,7 +636,7 @@
       onclick="goToDetail('found2')">
 
       <div class="item-image">
-        ☂️
+        <img class="item-image-real" src="images/umbrella.jpg" alt="黑色长柄雨伞">
       </div>
 
       <div class="item-content">
@@ -754,7 +693,7 @@
       onclick="goToDetail('found3')">
 
       <div class="item-image">
-        📖
+        <img class="item-image-real" src="images/books.jpg" alt="大学英语教材">
       </div>
 
       <div class="item-content">
@@ -821,58 +760,12 @@
 
 
   <!-- 底部导航 -->
-  <div class="bottom-nav">
-
-    <button
-      class="nav-btn"
-      onclick="window.location.hash='#home'">
-
-      <span class="nav-icon">
-        🏠
-      </span>
-
-      <span>
-        首页
-      </span>
-
-    </button>
-
-
-    <button
-      class="nav-btn"
-      onclick="window.location.hash='#publish'">
-
-      <span class="nav-icon">
-        ➕
-      </span>
-
-      <span>
-        发布
-      </span>
-
-    </button>
-
-
-    <button
-      class="nav-btn active"
-      onclick="window.location.hash='#mine'">
-
-      <span class="nav-icon">
-        👤
-      </span>
-
-      <span>
-        我的
-      </span>
-
-    </button>
-
-  </div>
+  
 
 </div>
   </section>
   <section class="view" id="view-search" data-route="search">
-<div class="phone-frame">
+<div class="view-inner">
 
 
     <!-- =========================
@@ -1052,7 +945,7 @@
         >
 
             <div class="item-image">
-                💳
+                <img class="item-image-real" src="images/campus-card.jpg" alt="蓝色校园卡">
             </div>
 
             <div class="item-content">
@@ -1098,7 +991,7 @@
         >
 
             <div class="item-image">
-                🔑
+                <img class="item-image-real" src="images/keys.jpg" alt="一串黑色钥匙">
             </div>
 
             <div class="item-content">
@@ -1144,7 +1037,7 @@
         >
 
             <div class="item-image">
-                🥤
+                <img class="item-image-real" src="images/water-bottle.jpg" alt="深蓝色保温杯">
             </div>
 
             <div class="item-content">
@@ -1190,7 +1083,7 @@
         >
 
             <div class="item-image">
-                ☂️
+                <img class="item-image-real" src="images/umbrella.jpg" alt="黑色长柄雨伞">
             </div>
 
             <div class="item-content">
@@ -1236,7 +1129,7 @@
         >
 
             <div class="item-image">
-                🎧
+                <img class="item-image-real" src="images/earphones.jpg" alt="白色无线耳机">
             </div>
 
             <div class="item-content">
@@ -1282,7 +1175,7 @@
         >
 
             <div class="item-image">
-                📚
+                <img class="item-image-real" src="images/books.jpg" alt="大学英语教材">
             </div>
 
             <div class="item-content">
@@ -1328,7 +1221,7 @@
         >
 
             <div class="item-image">
-                🎒
+                <img class="item-image-real" src="images/backpack.jpg" alt="黑色双肩背包">
             </div>
 
             <div class="item-content">
@@ -1397,62 +1290,13 @@
          完全按照你上传的首页样式
     ========================== -->
 
-    <div class="bottom-nav">
-
-        <button
-            class="nav-btn"
-            onclick="goHome()"
-        >
-
-            <span class="nav-icon">
-                🏠
-            </span>
-
-            <span>
-                首页
-            </span>
-
-        </button>
-
-
-        <button
-            class="nav-btn"
-            onclick="goPublish()"
-        >
-
-            <span class="nav-icon">
-                ➕
-            </span>
-
-            <span>
-                发布
-            </span>
-
-        </button>
-
-
-        <button
-            class="nav-btn"
-            onclick="goMine()"
-        >
-
-            <span class="nav-icon">
-                👤
-            </span>
-
-            <span>
-                我的
-            </span>
-
-        </button>
-
-    </div>
+    
 
 
 </div>
   </section>
   <section class="view" id="view-favorites" data-route="favorites">
-<div class="phone-frame">
+<div class="view-inner">
 
     <!-- 顶部栏 -->
     <div class="top-bar">
@@ -1515,7 +1359,7 @@
             >
 
                 <div class="item-image">
-                    💳
+                    <img class="item-image-real" src="images/campus-card.jpg" alt="蓝色校园卡">
                 </div>
 
                 <div class="item-info">
@@ -1580,7 +1424,7 @@
                         );
                     "
                 >
-                    🔑
+                    <img class="item-image-real" src="images/keys.jpg" alt="一串黑色钥匙">
                 </div>
 
                 <div class="item-info">
@@ -1644,7 +1488,7 @@
                         );
                     "
                 >
-                    🎧
+                    <img class="item-image-real" src="images/earphones.jpg" alt="白色无线耳机">
                 </div>
 
                 <div class="item-info">
@@ -1708,7 +1552,7 @@
                         );
                     "
                 >
-                    ☂️
+                    <img class="item-image-real" src="images/umbrella.jpg" alt="黑色长柄雨伞">
                 </div>
 
                 <div class="item-info">
@@ -1792,7 +1636,7 @@
 </div>
   </section>
   <section class="view" id="view-profile" data-route="profile">
-<div class="phone-frame">
+<div class="view-inner">
 
     <!-- 顶部栏 -->
     <div class="top-bar">
@@ -1944,7 +1788,7 @@
 </div>
   </section>
   <section class="view" id="view-detail" data-route="detail">
-  <div class="phone-frame">
+  <div class="view-inner">
 
     <div class="top-bar">
       <button class="top-btn" onclick="goBack()">
@@ -1966,7 +1810,7 @@
 
     <div class="detail-scroll">
 
-      <div class="detail-image">💳</div>
+      <div class="detail-image"><img class="item-image-real" src="images/campus-card.jpg" alt="蓝色校园卡"></div>
 
       <div class="detail-content">
 
@@ -2087,6 +1931,7 @@
 
   
   </section>
+  </main>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>
