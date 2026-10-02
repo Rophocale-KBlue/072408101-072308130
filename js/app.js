@@ -1,0 +1,668 @@
+(function () {
+  'use strict';
+
+  var ROUTES = [
+    'home',
+    'publish',
+    'mine',
+    'search',
+    'detail',
+    'myLost',
+    'myFound',
+    'favorites',
+    'profile',
+    'publishSuccess',
+    'publishFailure'
+  ];
+
+  var LEGACY_ALIASES = {
+    '发布成功': 'publishSuccess',
+    '发布失败': 'publishFailure',
+    'edit-profile': 'profile',
+    'my-lost': 'myLost',
+    'my-found': 'myFound',
+    'my-favorites': 'favorites'
+  };
+
+  var detailFavorite = false;
+  var searchCategory = '全部';
+
+  function $(selector, root) {
+    return (root || document).querySelector(selector);
+  }
+
+  function $$(selector, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(selector));
+  }
+
+  function getView(name) {
+    return document.getElementById('view-' + name);
+  }
+
+  function activeView() {
+    return document.querySelector('.view.active');
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function parseHash() {
+    var raw = (window.location.hash || '').replace(/^#\/?/, '');
+    if (!raw) {
+      return { name: 'home', param: null };
+    }
+
+    if (LEGACY_ALIASES[raw]) {
+      raw = LEGACY_ALIASES[raw];
+    }
+
+    if (raw.indexOf('detail/') === 0) {
+      return { name: 'detail', param: raw.slice(7) || 'item1' };
+    }
+
+    if (ROUTES.indexOf(raw) === -1) {
+      return { name: 'home', param: null };
+    }
+
+    return { name: raw, param: null };
+  }
+
+  function updateNav(routeName) {
+    var target = null;
+    if (routeName === 'home') {
+      target = '首页';
+    } else if (routeName === 'publish' || routeName === 'publishSuccess' || routeName === 'publishFailure') {
+      target = '发布';
+    } else if (routeName === 'mine' || routeName === 'myLost' || routeName === 'myFound') {
+      target = '我的';
+    }
+
+    $$('.nav-btn').forEach(function (btn) {
+      var spans = btn.querySelectorAll('span');
+      var label = spans.length ? spans[spans.length - 1].innerText.trim() : '';
+      btn.classList.toggle('active', target !== null && label === target);
+    });
+  }
+
+  function getDetailItem(id) {
+    var data = window.APP_DATA || {};
+    var item = data.itemsById && data.itemsById[id];
+    if (!item && data.items && data.items.length) {
+      item = data.items[0];
+    }
+    return item || {
+      type: 'lost',
+      category: '校园卡',
+      emoji: '💳',
+      title: '蓝色校园卡',
+      location: '图书馆三楼',
+      time: '2026-09-28 14:30',
+      desc: '暂无描述',
+      publisher: '同学',
+      contact: '暂无联系方式',
+      wechat: '暂无微信'
+    };
+  }
+
+  function renderDetail(id) {
+    var view = getView('detail');
+    if (!view) return;
+
+    var item = getDetailItem(id);
+    var isFound = item.type === 'found';
+
+    var image = $('.detail-image', view);
+    var status = $('.status-tag', view);
+    var typeTag = $('.type-tag', view);
+    var title = $('.detail-title', view);
+    var infoValues = $$('.info-row .info-value', view);
+    var description = $('.description', view);
+    var publisherName = $('.publisher-name', view);
+    var publisherTime = $('.publisher-time', view);
+    var contactBtn = $('.contact-btn', view);
+    var contactRows = $$('#contactModal .contact-row', view);
+    var favoriteBtn = $('#favoriteBtn', view);
+    var favoriteIcon = $('#favoriteIcon', view);
+    var favoriteText = $('#favoriteText', view);
+
+    if (image) image.textContent = item.emoji;
+    if (status) {
+      status.textContent = isFound ? '招领' : '寻物';
+      status.classList.toggle('found', isFound);
+    }
+    if (typeTag) typeTag.textContent = item.category;
+    if (title) title.textContent = item.title;
+    if (infoValues[0]) infoValues[0].textContent = item.time;
+    if (infoValues[1]) infoValues[1].textContent = item.location;
+    if (infoValues[2]) infoValues[2].textContent = item.category;
+    if (description) description.innerHTML = escapeHtml(item.desc).replace(/\n/g, '<br>');
+    if (publisherName) publisherName.textContent = item.publisher;
+    if (publisherTime) publisherTime.textContent = '发布于 ' + item.time;
+    if (contactBtn) contactBtn.textContent = isFound ? '联系招领者' : '联系寻物者';
+    if (contactRows[0]) contactRows[0].textContent = '📱　联系方式：' + item.contact;
+    if (contactRows[1]) contactRows[1].textContent = '💬　微信：' + item.wechat;
+
+    detailFavorite = false;
+    if (favoriteBtn) favoriteBtn.classList.remove('active');
+    if (favoriteIcon) favoriteIcon.innerText = '♡';
+    if (favoriteText) favoriteText.innerText = '收藏';
+  }
+
+  function renderRoute() {
+    var route = parseHash();
+    var view = getView(route.name) || getView('home');
+
+    $$('.view').forEach(function (v) {
+      v.classList.remove('active');
+    });
+    view.classList.add('active');
+    updateNav(route.name);
+
+    if (route.name === 'detail') {
+      renderDetail(route.param || 'item1');
+    }
+
+    window.scrollTo(0, 0);
+  }
+
+  // ===== 路由跳转 =====
+  window.goToDetail = function (id) {
+    window.location.hash = 'detail/' + id;
+  };
+
+  window.goToSearch = function () {
+    window.location.hash = 'search';
+  };
+
+  window.goHome = function () {
+    window.location.hash = 'home';
+  };
+
+  window.goPublish = function () {
+    window.location.hash = 'publish';
+  };
+
+  window.goMine = function () {
+    window.location.hash = 'mine';
+  };
+
+  window.openDetail = function (id) {
+    window.location.hash = 'detail/' + id;
+  };
+
+  window.goToEditProfile = function () {
+    window.location.hash = 'profile';
+  };
+
+  window.goToMyLost = function () {
+    window.location.hash = 'myLost';
+  };
+
+  window.goToMyFound = function () {
+    window.location.hash = 'myFound';
+  };
+
+  window.goToMyFavorites = function () {
+    window.location.hash = 'favorites';
+  };
+
+  window.goToSettings = function () {
+    window.alert('设置功能暂未开放');
+  };
+
+  window.goBack = function () {
+    var view = activeView();
+    var route = view ? view.getAttribute('data-route') : 'home';
+    if (route === 'detail') {
+      window.location.hash = 'search';
+    } else {
+      window.location.hash = 'mine';
+    }
+  };
+
+  // ===== 发布页 =====
+  window.selectType = function (type) {
+    var view = getView('publish');
+    if (!view) return;
+
+    var lostBtn = $('#lostBtn', view);
+    var foundBtn = $('#foundBtn', view);
+    var formCard = $('#formCard', view);
+    var publishContent = $('#publishContent', view);
+    var typeText = $('#typeText', view);
+    var placeLabel = $('#placeLabel', view);
+    var timeLabel = $('#timeLabel', view);
+
+    if (type === 'found') {
+      lostBtn.classList.remove('active');
+      foundBtn.classList.add('active');
+      formCard.classList.add('found');
+      publishContent.classList.add('found-mode');
+      publishContent.classList.remove('lost-mode');
+      typeText.innerText = '正在发布招领信息';
+      placeLabel.innerHTML = '<span class="required">*</span> 得到地点';
+      timeLabel.innerHTML = '<span class="required">*</span> 得到时间';
+    } else {
+      lostBtn.classList.add('active');
+      foundBtn.classList.remove('active');
+      formCard.classList.remove('found');
+      publishContent.classList.add('lost-mode');
+      publishContent.classList.remove('found-mode');
+      typeText.innerText = '正在发布寻物信息';
+      placeLabel.innerHTML = '<span class="required">*</span> 丢失地点';
+      timeLabel.innerHTML = '<span class="required">*</span> 丢失时间';
+    }
+  };
+
+  window.previewImages = function (event) {
+    var view = event.target.closest('.view');
+    if (!view) return;
+
+    var files = event.target.files;
+    var preview = $('#imagePreview', view);
+    preview.innerHTML = '';
+
+    if (!files || files.length === 0) {
+      preview.classList.remove('show');
+      return;
+    }
+
+    Array.prototype.slice.call(files, 0, 4).forEach(function (file) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'preview-item';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+    preview.classList.add('show');
+  };
+
+  window.publishInfo = function () {
+    var view = getView('publish');
+    if (!view) return;
+
+    var itemType = $('#itemType', view);
+    var itemName = $('#itemName', view);
+    var place = $('#placeInput', view);
+    var date = $('#dateInput', view);
+    var time = $('#timeInput', view);
+    var contact = $('#contactInput', view);
+
+    var valid = itemType.value &&
+      itemName.value.trim() &&
+      place.value.trim() &&
+      date.value &&
+      time.value &&
+      contact.value.trim();
+
+    window.location.hash = valid ? 'publishSuccess' : 'publishFailure';
+  };
+
+  // ===== 我的寻物 / 我的招领 =====
+  function listFilter(filter, btn) {
+    var view = btn.closest('.view');
+    if (!view) return;
+
+    var buttons = $$('.filter-btn', view);
+    var items = $$('.list-item', view);
+    var emptyState = $('#emptyState', view);
+    var countNumber = $('#countNumber', view);
+    var visibleCount = 0;
+
+    buttons.forEach(function (item) {
+      item.classList.remove('active');
+    });
+    btn.classList.add('active');
+
+    items.forEach(function (item) {
+      var status = item.getAttribute('data-status');
+      var show = filter === 'all' || status === filter;
+      item.style.display = show ? 'flex' : 'none';
+      if (show) visibleCount++;
+    });
+
+    if (countNumber) countNumber.innerText = visibleCount;
+    if (emptyState) emptyState.style.display = visibleCount === 0 ? 'flex' : 'none';
+  }
+
+  function markStatus(btn, text) {
+    var view = btn.closest('.view');
+    var card = btn.closest('.list-item');
+    if (!view || !card) return;
+
+    var status = $('.tag-status', card);
+    status.innerText = text;
+    status.classList.remove('active');
+    status.classList.add('done');
+    card.setAttribute('data-status', 'done');
+    btn.remove();
+
+    var activeFilter = $('.filter-btn.active', view);
+    if (activeFilter && activeFilter.getAttribute('data-filter') === 'active') {
+      var activeButton = $('.filter-btn[data-filter="active"]', view);
+      if (activeButton) listFilter('active', activeButton);
+    }
+  }
+
+  window.markFound = function (btn) {
+    markStatus(btn, '已找到');
+  };
+
+  window.markReturned = function (btn) {
+    markStatus(btn, '已归还');
+  };
+
+  // ===== 我的收藏 =====
+  function favoriteFilter(type, btn) {
+    var view = btn.closest('.view');
+    if (!view) return;
+
+    var buttons = $$('.filter-btn', view);
+    var cards = $$('.favorite-card', view);
+    var visibleCount = 0;
+
+    buttons.forEach(function (item) {
+      item.classList.remove('active');
+    });
+    btn.classList.add('active');
+
+    cards.forEach(function (card) {
+      var cardType = card.getAttribute('data-type');
+      var show = type === 'all' || cardType === type;
+      card.style.display = show ? 'flex' : 'none';
+      if (show) visibleCount++;
+    });
+
+    updateFavoriteEmpty(view, visibleCount);
+  }
+
+  function updateFavoriteCount(view) {
+    var cards = $$('.favorite-card', view);
+    var countText = $('#countText', view);
+    if (countText) countText.textContent = cards.length + ' 条';
+  }
+
+  function updateFavoriteEmpty(view, count) {
+    var list = $('#favoriteList', view);
+    var empty = $('#emptyState', view);
+    if (!list || !empty) return;
+
+    if (count === 0) {
+      list.style.display = 'none';
+      empty.style.display = 'flex';
+    } else {
+      list.style.display = 'flex';
+      empty.style.display = 'none';
+    }
+  }
+
+  window.removeFavorite = function (event, button) {
+    event.stopPropagation();
+    var view = button.closest('.view');
+    if (!view) return;
+
+    var card = button.closest('.favorite-card');
+    if (card) card.remove();
+    updateFavoriteCount(view);
+    window.showToast('已取消收藏', view);
+
+    var visibleCount = 0;
+    $$('.favorite-card', view).forEach(function (item) {
+      if (item.style.display !== 'none') visibleCount++;
+    });
+    updateFavoriteEmpty(view, visibleCount);
+  };
+
+  // 两个页面都叫 filterItems，这里根据容器内是否存在收藏列表自动分派。
+  window.filterItems = function (filter, btn) {
+    var view = btn.closest('.view');
+    if (!view) return;
+    if ($('.favorite-list', view)) {
+      favoriteFilter(filter, btn);
+    } else {
+      listFilter(filter, btn);
+    }
+  };
+
+  // ===== 搜索页 =====
+  function filterSearchCards(view, category, keyword) {
+    var cards = $$('.list-item', view);
+    var count = 0;
+
+    cards.forEach(function (card) {
+      var cardCategory = card.getAttribute('data-category') || '';
+      var cardKeywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+      var categoryMatch = category === '全部' || cardCategory === category;
+      var keywordMatch = keyword === '' || cardKeywords.indexOf(keyword) !== -1;
+      var show = categoryMatch && keywordMatch;
+      card.style.display = show ? 'flex' : 'none';
+      if (show) count++;
+    });
+
+    var resultCount = $('#resultCount', view);
+    if (resultCount) resultCount.innerText = '共 ' + count + ' 条';
+    return count;
+  }
+
+  window.filterCategory = function (button) {
+    var view = button.closest('.view');
+    if (!view) return;
+
+    $$('.category-filter button', view).forEach(function (btn) {
+      btn.classList.remove('active');
+    });
+    button.classList.add('active');
+    searchCategory = button.getAttribute('data-category');
+
+    var input = $('#searchInput', view);
+    if (input) input.value = '';
+
+    var count = filterSearchCards(view, searchCategory, '');
+    var success = $('#searchSuccess', view);
+    var empty = $('#empty', view);
+    if (success) success.style.display = 'none';
+    if (empty) empty.style.display = count === 0 ? 'block' : 'none';
+  };
+
+  window.searchItems = function () {
+    var view = getView('search');
+    if (!view) return;
+
+    var input = $('#searchInput', view);
+    var keyword = input ? input.value.trim().toLowerCase() : '';
+    var count = filterSearchCards(view, searchCategory, keyword);
+
+    var success = $('#searchSuccess', view);
+    var empty = $('#empty', view);
+    var emptyText = $('#emptyText', view);
+
+    if (success) {
+      if (keyword !== '') {
+        success.style.display = 'block';
+        success.innerHTML = '搜索“' + escapeHtml(keyword) + '”，找到 ' + count + ' 条相关信息';
+      } else {
+        success.style.display = 'none';
+      }
+    }
+
+    if (empty) {
+      empty.style.display = count === 0 ? 'block' : 'none';
+    }
+
+    if (emptyText && count === 0) {
+      emptyText.innerText = keyword
+        ? '没有找到包含“' + keyword + '”的物品，可以换个关键词试试'
+        : '暂时没有找到相关信息';
+    }
+  };
+
+  // ===== 详情页 =====
+  window.toggleMore = function () {
+    var view = getView('detail');
+    if (!view) return;
+    var menu = $('#moreMenu', view);
+    if (menu) menu.classList.toggle('show');
+  };
+
+  window.toggleFavorite = function () {
+    var view = getView('detail');
+    if (!view) return;
+
+    detailFavorite = !detailFavorite;
+    var button = $('#favoriteBtn', view);
+    var icon = $('#favoriteIcon', view);
+    var text = $('#favoriteText', view);
+
+    if (detailFavorite) {
+      button.classList.add('active');
+      icon.innerText = '♥';
+      text.innerText = '已收藏';
+    } else {
+      button.classList.remove('active');
+      icon.innerText = '♡';
+      text.innerText = '收藏';
+    }
+  };
+
+  window.openContact = function () {
+    var view = getView('detail');
+    var modal = $('#contactModal', view);
+    if (modal) modal.classList.add('show');
+  };
+
+  window.shareItem = function () {
+    var view = getView('detail');
+    var menu = $('#moreMenu', view);
+    var modal = $('#shareModal', view);
+    if (menu) menu.classList.remove('show');
+    if (modal) modal.classList.add('show');
+  };
+
+  window.reportItem = function () {
+    var view = getView('detail');
+    var menu = $('#moreMenu', view);
+    var modal = $('#reportModal', view);
+    if (menu) menu.classList.remove('show');
+    if (modal) modal.classList.add('show');
+  };
+
+  window.closeAllModal = function () {
+    var view = getView('detail');
+    ['contactModal', 'shareModal', 'reportModal'].forEach(function (id) {
+      var modal = document.getElementById(id);
+      if (modal) modal.classList.remove('show');
+    });
+  };
+
+  window.closeModal = function (event) {
+    if (event.target === event.currentTarget) {
+      window.closeAllModal();
+    }
+  };
+
+  window.submitReport = function (type) {
+    window.alert('已提交举报\n\n举报原因：' + type);
+    window.closeAllModal();
+  };
+
+  document.addEventListener('click', function (event) {
+    var view = getView('detail');
+    if (!view || !view.classList.contains('active')) return;
+    var menu = $('#moreMenu', view);
+    var topBar = $('.top-bar', view);
+    if (topBar && menu && !topBar.contains(event.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+  // ===== 个人信息 =====
+  window.changeAvatar = function (event) {
+    var view = event.target.closest('.view');
+    var file = event.target.files && event.target.files[0];
+    if (!view || !file || file.type.indexOf('image/') !== 0) return;
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var avatar = $('#avatar', view);
+      if (avatar) avatar.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.saveInfo = function () {
+    var view = getView('profile');
+    if (!view) return;
+
+    var userInfo = {
+      name: $('#name', view).value,
+      signature: $('#signature', view).value,
+      qq: $('#qq', view).value,
+      wechat: $('#wechat', view).value,
+      phone: $('#phone', view).value,
+      avatar: $('#avatar', view).src
+    };
+
+    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    window.showToast('保存成功', view);
+  };
+
+  function loadProfile() {
+    var view = getView('profile');
+    if (!view) return;
+
+    var saved = localStorage.getItem('userInfo');
+    if (!saved) return;
+
+    try {
+      var userInfo = JSON.parse(saved);
+      if (userInfo.name) $('#name', view).value = userInfo.name;
+      if (userInfo.signature) $('#signature', view).value = userInfo.signature;
+      if (userInfo.qq) $('#qq', view).value = userInfo.qq;
+      if (userInfo.wechat) $('#wechat', view).value = userInfo.wechat;
+      if (userInfo.phone) $('#phone', view).value = userInfo.phone;
+      if (userInfo.avatar) $('#avatar', view).src = userInfo.avatar;
+    } catch (error) {
+      window.console.log('读取个人信息失败');
+    }
+  }
+
+  // ===== Toast =====
+  window.showToast = function (text, view) {
+    var v = view || activeView();
+    if (!v) return;
+    var toast = $('.toast', v);
+    if (!toast) return;
+
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(function () {
+      toast.classList.remove('show');
+    }, 1600);
+  };
+
+  // ===== 初始化 =====
+  window.addEventListener('hashchange', renderRoute);
+  window.addEventListener('DOMContentLoaded', function () {
+    renderRoute();
+    loadProfile();
+
+    var searchInput = document.querySelector('#view-search #searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          window.searchItems();
+        }
+      });
+    }
+  });
+})();

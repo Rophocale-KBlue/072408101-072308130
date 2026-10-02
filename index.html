@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>校园失物招领 · 原型</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="view" id="view-home" data-route="home">
+  <div class="phone-frame">
+
+    <div class="hero-section">
+      <div class="hero-title">校园失物招领</div>
+    </div>
+
+    <div class="search-section">
+      <div class="search-box" onclick="goToSearch()">
+        <span class="search-icon">🔍</span>
+        <span class="search-placeholder">搜索物品、地点</span>
+      </div>
+    </div>
+
+    <div class="scroll-panel">
+
+      <div class="list-item" onclick="goToDetail('item1')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status lost">寻物</span>
+            <span class="tag-item-type">校园卡</span>
+          </div>
+          <div class="row-time">📅 2026-09-28 14:30</div>
+          <div class="row-location">📍 图书馆三楼</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+      <div class="list-item" onclick="goToDetail('item2')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status found">招领</span>
+            <span class="tag-item-type">钥匙</span>
+          </div>
+          <div class="row-time">📅 2026-09-28 09:15</div>
+          <div class="row-location">📍 学习中心四楼</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+      <div class="list-item" onclick="goToDetail('item3')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status lost">寻物</span>
+            <span class="tag-item-type">水杯</span>
+          </div>
+          <div class="row-time">📅 2026-09-27 18:40</div>
+          <div class="row-location">📍 东3-303</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+      <div class="list-item" onclick="goToDetail('item4')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status found">招领</span>
+            <span class="tag-item-type">雨伞</span>
+          </div>
+          <div class="row-time">📅 2026-09-27 12:20</div>
+          <div class="row-location">📍 玫瑰园食堂</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+      <div class="list-item" onclick="goToDetail('item5')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status lost">寻物</span>
+            <span class="tag-item-type">耳机</span>
+          </div>
+          <div class="row-time">📅 2026-09-26 20:10</div>
+          <div class="row-location">📍 学习中心四楼</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+      <div class="list-item" onclick="goToDetail('item6')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status found">招领</span>
+            <span class="tag-item-type">书籍</span>
+          </div>
+          <div class="row-time">📅 2026-09-26 15:05</div>
+          <div class="row-location">📍 西3-103</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+      <div class="list-item" onclick="goToDetail('item7')">
+        <div class="item-image-placeholder"></div>
+        <div class="item-content">
+          <div class="row-first">
+            <span class="tag-status lost">寻物</span>
+            <span class="tag-item-type">其他</span>
+          </div>
+          <div class="row-time">📅 2026-09-26 08:50</div>
+          <div class="row-location">📍 图书馆三楼</div>
+          <div class="detail-link">&gt; 查看详情</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 底部导航栏现在放在 phone-frame 内部，跟着容器走 -->
+    <div class="bottom-nav">
+      <button class="nav-btn active" onclick="location.href='#home'">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+      </button>
+      <button class="nav-btn" onclick="location.href='#publish'">
+        <span class="nav-icon">➕</span>
+        <span>发布</span>
+      </button>
+      <button class="nav-btn" onclick="location.href='#mine'">
+        <span class="nav-icon">👤</span>
+        <span>我的</span>
+      </button>
+    </div>
+
+  </div>
+
+  
+  </section>
+  <section class="view" id="view-publish" data-route="publish">
+  <div class="phone-frame">
+
+    <div class="page-header">
+      <div class="page-title">发布信息</div>
+      <div class="page-subtitle">填写物品信息，让它早日找到主人</div>
+    </div>
+
+    <div class="publish-content lost-mode" id="publishContent">
+
+      <div class="type-switch">
+        <button class="type-btn lost active" id="lostBtn" onclick="selectType('lost')">
+          我要寻物
+        </button>
+        <button class="type-btn found" id="foundBtn" onclick="selectType('found')">
+          我要招领
+        </button>
+      </div>
+
+      <div class="form-card" id="formCard">
+
+        <div class="selected-type">
+          <span class="selected-type-dot" id="typeDot"></span>
+          <span class="selected-type-text" id="typeText">正在发布寻物信息</span>
+          <span class="selected-type-line"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span class="required">*</span>
+            物品类型
+          </label>
+          <div class="select-wrapper">
+            <select class="input-box" id="itemType" required="">
+              <option value="" disabled="" selected="">请选择物品类型</option>
+              <option value="校园卡">校园卡</option>
+              <option value="钥匙">钥匙</option>
+              <option value="水杯">水杯</option>
+              <option value="雨伞">雨伞</option>
+              <option value="耳机">耳机</option>
+              <option value="书籍">书籍</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span class="required">*</span>
+            物品名称
+          </label>
+          <input type="text" class="input-box" id="itemName" placeholder="请输入物品名称" required="">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" id="placeLabel">
+            <span class="required">*</span>
+            丢失地点
+          </label>
+          <input type="text" class="input-box" id="placeInput" placeholder="例如：图书馆三楼" required="">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" id="timeLabel">
+            <span class="required">*</span>
+            丢失时间
+          </label>
+          <div class="datetime-row">
+            <input type="date" class="input-box" id="dateInput" required="">
+            <input type="time" class="input-box" id="timeInput" required="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span class="required">*</span>
+            联系方式
+          </label>
+          <input type="text" class="input-box" id="contactInput" placeholder="请输入手机号、QQ或微信" required="">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">具体描述</label>
+          <textarea class="textarea-box" placeholder="可以描述物品颜色、外观特征、特殊标记等信息"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            图片
+            <span style="font-size:10px; color:#a6b2c0; font-weight:400;">（选填）</span>
+          </label>
+          <label class="upload-area" for="imageInput">
+            <div class="upload-icon">＋</div>
+            <div class="upload-title">上传物品图片</div>
+            <div class="upload-subtitle">支持 JPG、PNG 等图片格式</div>
+          </label>
+          <input type="file" id="imageInput" accept="image/*" multiple="" onchange="previewImages(event)">
+          <div class="image-preview" id="imagePreview"></div>
+        </div>
+
+        <button class="publish-btn" onclick="publishInfo()" contenteditable="true" style="opacity: 1;">点击发布</button>
+
+      </div>
+
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="location.href='#home'">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+      </button>
+      <button class="nav-btn active" onclick="location.href='#publish'">
+        <span class="nav-icon">➕</span>
+        <span>发布</span>
+      </button>
+      <button class="nav-btn" onclick="location.href='#mine'">
+        <span class="nav-icon">👤</span>
+        <span>我的</span>
+      </button>
+    </div>
+
+  </div>
+
+  
+  </section>
+  <section class="view" id="view-mine" data-route="mine">
+  <div class="phone-frame">
+
+    <div class="profile-section">
+      <div class="profile-left">
+        <div class="avatar-placeholder"></div>
+        <div class="profile-info">
+          <div class="profile-name">张小言</div>
+          <div class="profile-signature">这个人很懒，什么都没留下</div>
+        </div>
+      </div>
+      <div class="edit-btn" onclick="goToEditProfile()">
+        <span class="edit-icon">✏️</span>
+        <span>编辑资料</span>
+      </div>
+    </div>
+
+    <div class="menu-list">
+
+      <div class="section-title">
+        <span class="section-title-main">我的校园空间</span>
+        <span class="section-title-sub">个人中心</span>
+      </div>
+
+      <div class="menu-item" onclick="goToMyLost()">
+        <div class="menu-left">
+          <div class="menu-icon-box lost-icon">🔍</div>
+          <div class="menu-text">
+            <span class="menu-label">我的寻物</span>
+            <span class="menu-description">查看正在寻找的物品</span>
+          </div>
+        </div>
+        <span class="menu-arrow">></span>
+      </div>
+
+      <div class="menu-item" onclick="goToMyFound()">
+        <div class="menu-left">
+          <div class="menu-icon-box found-icon">📢</div>
+          <div class="menu-text">
+            <span class="menu-label">我的招领</span>
+            <span class="menu-description">管理我发布的招领信息</span>
+          </div>
+        </div>
+        <span class="menu-arrow">></span>
+      </div>
+
+      <div class="menu-item" onclick="goToMyFavorites()">
+        <div class="menu-left">
+          <div class="menu-icon-box favorite-icon">⭐</div>
+          <div class="menu-text">
+            <span class="menu-label">我的收藏</span>
+            <span class="menu-description">保存感兴趣的失物信息</span>
+          </div>
+        </div>
+        <span class="menu-arrow">></span>
+      </div>
+
+      <div class="menu-item" onclick="goToSettings()">
+        <div class="menu-left">
+          <div class="menu-icon-box settings-icon">⚙️</div>
+          <div class="menu-text">
+            <span class="menu-label">设置</span>
+            <span class="menu-description">通知、隐私与账号设置</span>
+          </div>
+        </div>
+        <span class="menu-arrow">></span>
+      </div>
+
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="location.href='#home'">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+      </button>
+      <button class="nav-btn" onclick="location.href='#publish'">
+        <span class="nav-icon">➕</span>
+        <span>发布</span>
+      </button>
+      <button class="nav-btn active" onclick="location.href='#mine'">
+        <span class="nav-icon">👤</span>
+        <span>我的</span>
+      </button>
+    </div>
+
+  </div>
+
+  
+  </section>
+  <section class="view" id="view-publishSuccess" data-route="publishSuccess">
+  <div class="phone-frame">
+
+    <div class="page-header">
+      <div class="page-title">发布信息</div>
+      <div class="page-subtitle">校园失物招领</div>
+    </div>
+
+    <div class="result-content">
+      <div class="result-card">
+
+        <div class="success-icon">✓</div>
+
+        <div class="result-title">发布成功</div>
+
+        <div class="result-text">
+          你的信息已经成功发布
+          <br>
+          希望物品能够早日找到主人
+        </div>
+
+        <button class="result-btn" onclick="window.location.hash='home'">
+          返回首页
+        </button>
+
+        <button class="secondary-btn" onclick="window.location.hash='mine'">
+          查看我的发布
+        </button>
+
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="window.location.hash='home'">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+      </button>
+      <button class="nav-btn active" onclick="window.location.hash='publish'">
+        <span class="nav-icon">➕</span>
+        <span>发布</span>
+      </button>
+      <button class="nav-btn" onclick="window.location.hash='mine'">
+        <span class="nav-icon">👤</span>
+        <span>我的</span>
+      </button>
+    </div>
+
+  </div>
+  </section>
+  <section class="view" id="view-publishFailure" data-route="publishFailure">
+  <div class="phone-frame">
+
+    <div class="page-header">
+      <div class="page-title">发布信息</div>
+      <div class="page-subtitle">校园失物招领</div>
+    </div>
+
+    <div class="result-content">
+      <div class="result-card">
+
+        <div class="fail-icon">!</div>
+
+        <div class="result-title">发布失败</div>
+
+        <div class="result-text">
+          信息暂时无法发布
+          <br>
+          请检查必填信息是否填写完整
+        </div>
+
+        <div class="tips">
+          <strong>温馨提示</strong>
+          <br>
+          请确认物品类型、物品名称、地点、时间和联系方式均已填写。
+        </div>
+
+        <button class="result-btn" onclick="window.location.hash='publish'">
+          返回修改
+        </button>
+
+        <button class="secondary-btn" onclick="window.location.hash='home'">
+          返回首页
+        </button>
+
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="window.location.hash='home'">
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+      </button>
+      <button class="nav-btn active" onclick="window.location.hash='publish'">
+        <span class="nav-icon">➕</span>
+        <span>发布</span>
+      </button>
+      <button class="nav-btn" onclick="window.location.hash='mine'">
+        <span class="nav-icon">👤</span>
+        <span>我的</span>
+      </button>
+    </div>
+
+  </div>
+  </section>
+  <section class="view" id="view-myLost" data-route="myLost">
+  <div class="phone-frame">
+
+    <div class="page-header">
+
+      <!-- 返回按钮 -->
+      <button class="back-btn" onclick="goBack()">‹</button>
+
+      <div class="page-title">我的寻物</div>
+      <div class="page-subtitle">管理我发布的寻物信息</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-text">我的寻物</div>
+      <div>共 <span class="summary-count" id="countNumber">3</span> 条信息</div>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" data-filter="all" onclick="filterItems('all', this)">全部</button>
+      <button class="filter-btn" data-filter="active" onclick="filterItems('active', this)">寻找中</button>
+      <button class="filter-btn" data-filter="done" onclick="filterItems('done', this)">已找到</button>
+    </div>
+
+    <div class="scroll-panel">
+
+      <div class="list-item" data-status="active" onclick="goToDetail('lost1')">
+        <div class="item-image">💳</div>
+
+        <div class="item-content">
+
+          <div class="row-first">
+            <span class="tag-status active">寻找中</span>
+            <span class="tag-item-type">校园卡</span>
+          </div>
+
+          <div class="item-name">蓝色校园卡</div>
+
+          <div class="row-info">
+            📅 2026-09-28 14:30
+          </div>
+
+          <div class="row-info">
+            📍 图书馆三楼
+          </div>
+
+          <div class="card-actions">
+            <button
+              class="status-btn"
+              onclick="event.stopPropagation();markFound(this)">
+              标记已找到
+            </button>
+
+            <button
+              class="detail-btn"
+              onclick="event.stopPropagation();goToDetail('lost1')">
+              查看详情 >
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="list-item" data-status="active" onclick="goToDetail('lost2')">
+
+        <div class="item-image">🎧</div>
+
+        <div class="item-content">
+
+          <div class="row-first">
+            <span class="tag-status active">寻找中</span>
+            <span class="tag-item-type">耳机</span>
+          </div>
+
+          <div class="item-name">
+            白色无线耳机
+          </div>
+
+          <div class="row-info">
+            📅 2026-09-27 18:40
+          </div>
+
+          <div class="row-info">
+            📍 学习中心四楼
+          </div>
+
+          <div class="card-actions">
+
+            <button
+              class="status-btn"
+              onclick="event.stopPropagation();markFound(this)">
+              标记已找到
+            </button>
+
+            <button
+              class="detail-btn"
+              onclick="event.stopPropagation();goToDetail('lost2')">
+              查看详情 >
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="list-item" data-status="done" onclick="goToDetail('lost3')">
+
+        <div class="item-image">🥤</div>
+
+        <div class="item-content">
+
+          <div class="row-first">
+            <span class="tag-status done">已找到</span>
+            <span class="tag-item-type">水杯</span>
+          </div>
+
+          <div class="item-name">
+            深蓝色保温杯
+          </div>
+
+          <div class="row-info">
+            📅 2026-09-25 12:20
+          </div>
+
+          <div class="row-info">
+            📍 玫瑰园食堂
+          </div>
+
+          <div class="card-actions">
+
+            <button
+              class="detail-btn"
+              onclick="event.stopPropagation();goToDetail('lost3')">
+              查看详情 >
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="empty-state" id="emptyState">
+
+        <div class="empty-icon">
+          🔍
+        </div>
+
+        <div class="empty-title">
+          暂无相关信息
+        </div>
+
+        <div class="empty-text">
+          当前状态下还没有对应的寻物信息
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="bottom-nav">
+
+      <button
+        class="nav-btn"
+        onclick="window.location.hash='#home'">
+
+        <span class="nav-icon">🏠</span>
+        <span>首页</span>
+
+      </button>
+
+
+      <button
+        class="nav-btn"
+        onclick="window.location.hash='#publish'">
+
+        <span class="nav-icon">➕</span>
+        <span>发布</span>
+
+      </button>
+
+
+      <button
+        class="nav-btn active"
+        onclick="window.location.hash='#mine'">
+
+        <span class="nav-icon">👤</span>
+        <span>我的</span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  
+  </section>
+  <section class="view" id="view-myFound" data-route="myFound">
+<div class="phone-frame">
+
+  <!-- 顶部 -->
+  <div class="page-header">
+
+    <button class="back-btn" onclick="goBack()">
+      ‹
+    </button>
+
+    <div class="page-title">
+      我的招领
+    </div>
+
+    <div class="page-subtitle">
+      管理我发布的招领信息
+    </div>
+
+  </div>
+
+
+  <!-- 信息统计 -->
+  <div class="summary-row">
+
+    <div class="summary-text">
+      我的招领
+    </div>
+
+    <div>
+      共
+      <span
+        class="summary-count"
+        id="countNumber">
+        3
+      </span>
+      条信息
+    </div>
+
+  </div>
+
+
+  <!-- 筛选 -->
+  <div class="filter-row">
+
+    <button
+      class="filter-btn active"
+      data-filter="all"
+      onclick="filterItems('all', this)">
+      全部
+    </button>
+
+    <button
+      class="filter-btn"
+      data-filter="active"
+      onclick="filterItems('active', this)">
+      招领中
+    </button>
+
+    <button
+      class="filter-btn"
+      data-filter="done"
+      onclick="filterItems('done', this)">
+      已归还
+    </button>
+
+  </div>
+
+
+  <!-- 列表 -->
+  <div class="scroll-panel">
+
+
+    <!-- 第一条 -->
+    <div
+      class="list-item"
+      data-status="active"
+      onclick="goToDetail('found1')">
+
+      <div class="item-image">
+        🔑
+      </div>
+
+      <div class="item-content">
+
+        <div class="row-first">
+
+          <span class="tag-status active">
+            招领中
+          </span>
+
+          <span class="tag-item-type">
+            钥匙
+          </span>
+
+        </div>
+
+        <div class="item-name">
+          一串黑色钥匙
+        </div>
+
+        <div class="row-info">
+          📅 2026-09-28 10:20
+        </div>
+
+        <div class="row-info">
+          📍 食堂二楼
+        </div>
+
+        <div class="card-actions">
+
+          <button
+            class="status-btn"
+            onclick="event.stopPropagation();markReturned(this)">
+            标记已归还
+          </button>
+
+          <button
+            class="detail-btn"
+            onclick="event.stopPropagation();goToDetail('found1')">
+            查看详情 >
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 第二条 -->
+    <div
+      class="list-item"
+      data-status="active"
+      onclick="goToDetail('found2')">
+
+      <div class="item-image">
+        ☂️
+      </div>
+
+      <div class="item-content">
+
+        <div class="row-first">
+
+          <span class="tag-status active">
+            招领中
+          </span>
+
+          <span class="tag-item-type">
+            雨伞
+          </span>
+
+        </div>
+
+        <div class="item-name">
+          黑色长柄雨伞
+        </div>
+
+        <div class="row-info">
+          📅 2026-09-27 16:30
+        </div>
+
+        <div class="row-info">
+          📍 教学楼入口
+        </div>
+
+        <div class="card-actions">
+
+          <button
+            class="status-btn"
+            onclick="event.stopPropagation();markReturned(this)">
+            标记已归还
+          </button>
+
+          <button
+            class="detail-btn"
+            onclick="event.stopPropagation();goToDetail('found2')">
+            查看详情 >
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 第三条 -->
+    <div
+      class="list-item"
+      data-status="done"
+      onclick="goToDetail('found3')">
+
+      <div class="item-image">
+        📖
+      </div>
+
+      <div class="item-content">
+
+        <div class="row-first">
+
+          <span class="tag-status done">
+            已归还
+          </span>
+
+          <span class="tag-item-type">
+            书籍
+          </span>
+
+        </div>
+
+        <div class="item-name">
+          《大学英语》教材
+        </div>
+
+        <div class="row-info">
+          📅 2026-09-25 13:15
+        </div>
+
+        <div class="row-info">
+          📍 教学楼二楼
+        </div>
+
+        <div class="card-actions">
+
+          <button
+            class="detail-btn"
+            onclick="event.stopPropagation();goToDetail('found3')">
+            查看详情 >
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 空状态 -->
+    <div
+      class="empty-state"
+      id="emptyState">
+
+      <div class="empty-icon">
+        🔍
+      </div>
+
+      <div class="empty-title">
+        暂无相关信息
+      </div>
+
+      <div class="empty-text">
+        当前状态下还没有对应的招领信息
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+
+    <button
+      class="nav-btn"
+      onclick="window.location.hash='#home'">
+
+      <span class="nav-icon">
+        🏠
+      </span>
+
+      <span>
+        首页
+      </span>
+
+    </button>
+
+
+    <button
+      class="nav-btn"
+      onclick="window.location.hash='#publish'">
+
+      <span class="nav-icon">
+        ➕
+      </span>
+
+      <span>
+        发布
+      </span>
+
+    </button>
+
+
+    <button
+      class="nav-btn active"
+      onclick="window.location.hash='#mine'">
+
+      <span class="nav-icon">
+        👤
+      </span>
+
+      <span>
+        我的
+      </span>
+
+    </button>
+
+  </div>
+
+</div>
+  </section>
+  <section class="view" id="view-search" data-route="search">
+<div class="phone-frame">
+
+
+    <!-- =========================
+         页面标题
+    ========================== -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+            搜索物品
+        </div>
+
+        <div class="page-subtitle">
+            输入物品名称，快速寻找校园里的失物信息
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         搜索框
+    ========================== -->
+
+    <div class="search-section">
+
+        <div class="search-box">
+
+            <div class="search-input-wrap">
+
+                <span class="search-icon">
+                    🔍
+                </span>
+
+                <input
+                    id="searchInput"
+                    class="search-input"
+                    type="text"
+                    placeholder="搜索物品、地点"
+                >
+
+            </div>
+
+            <button
+                class="search-btn"
+                onclick="searchItems()"
+            >
+                搜索
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         快捷筛选
+    ========================== -->
+
+    <div class="category-title">
+        快捷筛选
+    </div>
+
+
+    <div class="category-wrapper">
+
+        <div class="category-filter">
+
+            <button
+                class="active"
+                data-category="全部"
+                onclick="filterCategory(this)"
+            >
+                全部
+            </button>
+
+            <button
+                data-category="校园卡"
+                onclick="filterCategory(this)"
+            >
+                校园卡
+            </button>
+
+            <button
+                data-category="钥匙"
+                onclick="filterCategory(this)"
+            >
+                钥匙
+            </button>
+
+            <button
+                data-category="水杯"
+                onclick="filterCategory(this)"
+            >
+                水杯
+            </button>
+
+            <button
+                data-category="雨伞"
+                onclick="filterCategory(this)"
+            >
+                雨伞
+            </button>
+
+            <button
+                data-category="耳机"
+                onclick="filterCategory(this)"
+            >
+                耳机
+            </button>
+
+            <button
+                data-category="书籍"
+                onclick="filterCategory(this)"
+            >
+                书籍
+            </button>
+
+            <button
+                data-category="其他"
+                onclick="filterCategory(this)"
+            >
+                其他
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         搜索结果滚动区域
+    ========================== -->
+
+    <div
+        class="scroll-panel"
+        id="scrollPanel"
+    >
+
+
+        <!-- 搜索结果数量 -->
+
+        <div class="result-header">
+
+            <div class="result-title">
+                失物信息
+            </div>
+
+            <div
+                class="result-count"
+                id="resultCount"
+            >
+                共 7 条
+            </div>
+
+        </div>
+
+
+        <!-- 搜索提示 -->
+
+        <div
+            class="search-success"
+            id="searchSuccess"
+        >
+            搜索完成
+        </div>
+
+
+        <!-- =========================
+             校园卡
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="校园卡"
+            data-keywords="校园卡 蓝色 学生卡"
+            onclick="openDetail('item1')"
+        >
+
+            <div class="item-image">
+                💳
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status lost">
+                        寻物
+                    </span>
+
+                    <span class="tag-item-type">
+                        校园卡
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-28 14:30
+                </div>
+
+                <div class="row-location">
+                    📍 图书馆三楼
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             钥匙
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="钥匙"
+            data-keywords="钥匙 黑色 一串 钥匙扣"
+            onclick="openDetail('item2')"
+        >
+
+            <div class="item-image">
+                🔑
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status found">
+                        招领
+                    </span>
+
+                    <span class="tag-item-type">
+                        钥匙
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-28 09:15
+                </div>
+
+                <div class="row-location">
+                    📍 学习中心四楼
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             水杯
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="水杯"
+            data-keywords="水杯 白色 保温杯"
+            onclick="openDetail('item3')"
+        >
+
+            <div class="item-image">
+                🥤
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status lost">
+                        寻物
+                    </span>
+
+                    <span class="tag-item-type">
+                        水杯
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-27 18:40
+                </div>
+
+                <div class="row-location">
+                    📍 东3-303
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             雨伞
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="雨伞"
+            data-keywords="雨伞 黑色 长柄 伞"
+            onclick="openDetail('item4')"
+        >
+
+            <div class="item-image">
+                ☂️
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status found">
+                        招领
+                    </span>
+
+                    <span class="tag-item-type">
+                        雨伞
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-27 12:20
+                </div>
+
+                <div class="row-location">
+                    📍 玫瑰园食堂
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             耳机
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="耳机"
+            data-keywords="耳机 白色 无线 蓝牙"
+            onclick="openDetail('item5')"
+        >
+
+            <div class="item-image">
+                🎧
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status lost">
+                        寻物
+                    </span>
+
+                    <span class="tag-item-type">
+                        耳机
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-26 20:10
+                </div>
+
+                <div class="row-location">
+                    📍 学习中心四楼
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             书籍
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="书籍"
+            data-keywords="书籍 教材 课本"
+            onclick="openDetail('item6')"
+        >
+
+            <div class="item-image">
+                📚
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status found">
+                        招领
+                    </span>
+
+                    <span class="tag-item-type">
+                        书籍
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-26 15:05
+                </div>
+
+                <div class="row-location">
+                    📍 西3-103
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             其他
+        ========================== -->
+
+        <div
+            class="list-item"
+            data-category="其他"
+            data-keywords="其他 黑色 背包 雨衣"
+            onclick="openDetail('item7')"
+        >
+
+            <div class="item-image">
+                🎒
+            </div>
+
+            <div class="item-content">
+
+                <div class="row-first">
+
+                    <span class="tag-status lost">
+                        寻物
+                    </span>
+
+                    <span class="tag-item-type">
+                        其他
+                    </span>
+
+                </div>
+
+                <div class="row-time">
+                    📅 2026-09-26 08:50
+                </div>
+
+                <div class="row-location">
+                    📍 图书馆三楼
+                </div>
+
+                <div class="detail-link">
+                    &gt; 查看详情
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             无结果
+        ========================== -->
+
+        <div
+            class="empty"
+            id="empty"
+        >
+
+            <div class="empty-icon">
+                🔍
+            </div>
+
+            <div class="empty-title">
+                未找到相关物品
+            </div>
+
+            <div
+                class="empty-text"
+                id="emptyText"
+            >
+                暂时没有找到相关信息，请尝试其他关键词
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         底部导航
+         完全按照你上传的首页样式
+    ========================== -->
+
+    <div class="bottom-nav">
+
+        <button
+            class="nav-btn"
+            onclick="goHome()"
+        >
+
+            <span class="nav-icon">
+                🏠
+            </span>
+
+            <span>
+                首页
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-btn"
+            onclick="goPublish()"
+        >
+
+            <span class="nav-icon">
+                ➕
+            </span>
+
+            <span>
+                发布
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-btn"
+            onclick="goMine()"
+        >
+
+            <span class="nav-icon">
+                👤
+            </span>
+
+            <span>
+                我的
+            </span>
+
+        </button>
+
+    </div>
+
+
+</div>
+  </section>
+  <section class="view" id="view-favorites" data-route="favorites">
+<div class="phone-frame">
+
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+
+        <button class="back-btn" onclick="goBack()">
+            ‹
+        </button>
+
+        <div class="page-title">
+            我的收藏
+        </div>
+
+        <div class="count-text" id="countText">
+            4 条
+        </div>
+
+    </div>
+
+
+    <!-- 内容 -->
+    <div class="content">
+
+        <!-- 筛选 -->
+        <div class="filter-bar">
+
+            <button
+                class="filter-btn active"
+                onclick="filterItems('all', this)">
+                全部
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterItems('lost', this)">
+                寻物
+            </button>
+
+            <button
+                class="filter-btn"
+                onclick="filterItems('found', this)">
+                招领
+            </button>
+
+        </div>
+
+
+        <!-- 收藏列表 -->
+        <div
+            class="favorite-list"
+            id="favoriteList"
+        >
+
+
+            <!-- 蓝色校园卡 -->
+            <div
+                class="favorite-card"
+                data-type="lost"
+                data-id="card"
+                onclick="openDetail('card')"
+            >
+
+                <div class="item-image">
+                    💳
+                </div>
+
+                <div class="item-info">
+
+                    <div class="item-top">
+
+                        <span class="status lost">
+                            寻物
+                        </span>
+
+                        <div class="item-title">
+                            蓝色校园卡
+                        </div>
+
+                    </div>
+
+                    <div class="item-desc">
+                        在图书馆三楼附近丢失，希望有同学帮忙留意。
+                    </div>
+
+                    <div class="item-meta">
+
+                        <span>
+                            📍 图书馆三楼
+                        </span>
+
+                        <span>
+                            🕐 09-28
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="favorite-btn"
+                    onclick="removeFavorite(event, this)"
+                    title="取消收藏"
+                >
+                    ♥
+                </button>
+
+            </div>
+
+
+            <!-- 黑色钥匙 -->
+            <div
+                class="favorite-card"
+                data-type="found"
+                data-id="keys"
+                onclick="openDetail('keys')"
+            >
+
+                <div
+                    class="item-image"
+                    style="
+                        background:linear-gradient(
+                            135deg,
+                            #f1f5f9,
+                            #e2e8f0
+                        );
+                    "
+                >
+                    🔑
+                </div>
+
+                <div class="item-info">
+
+                    <div class="item-top">
+
+                        <span class="status found">
+                            招领
+                        </span>
+
+                        <div class="item-title">
+                            一串黑色钥匙
+                        </div>
+
+                    </div>
+
+                    <div class="item-desc">
+                        在食堂二楼发现一串黑色钥匙，请失主及时联系。
+                    </div>
+
+                    <div class="item-meta">
+
+                        <span>
+                            📍 食堂二楼
+                        </span>
+
+                        <span>
+                            🕐 09-27
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="favorite-btn"
+                    onclick="removeFavorite(event, this)"
+                >
+                    ♥
+                </button>
+
+            </div>
+
+
+            <!-- 白色耳机 -->
+            <div
+                class="favorite-card"
+                data-type="lost"
+                data-id="earphone"
+                onclick="openDetail('earphone')"
+            >
+
+                <div
+                    class="item-image"
+                    style="
+                        background:linear-gradient(
+                            135deg,
+                            #f8fafc,
+                            #e2e8f0
+                        );
+                    "
+                >
+                    🎧
+                </div>
+
+                <div class="item-info">
+
+                    <div class="item-top">
+
+                        <span class="status lost">
+                            寻物
+                        </span>
+
+                        <div class="item-title">
+                            白色无线耳机
+                        </div>
+
+                    </div>
+
+                    <div class="item-desc">
+                        白色蓝牙耳机，可能遗落在教学楼自习室。
+                    </div>
+
+                    <div class="item-meta">
+
+                        <span>
+                            📍 教学楼
+                        </span>
+
+                        <span>
+                            🕐 09-26
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="favorite-btn"
+                    onclick="removeFavorite(event, this)"
+                >
+                    ♥
+                </button>
+
+            </div>
+
+
+            <!-- 黑色雨伞 -->
+            <div
+                class="favorite-card"
+                data-type="found"
+                data-id="umbrella"
+                onclick="openDetail('umbrella')"
+            >
+
+                <div
+                    class="item-image"
+                    style="
+                        background:linear-gradient(
+                            135deg,
+                            #eef2ff,
+                            #dbeafe
+                        );
+                    "
+                >
+                    ☂️
+                </div>
+
+                <div class="item-info">
+
+                    <div class="item-top">
+
+                        <span class="status found">
+                            招领
+                        </span>
+
+                        <div class="item-title">
+                            黑色长柄雨伞
+                        </div>
+
+                    </div>
+
+                    <div class="item-desc">
+                        在教学楼入口处发现一把黑色长柄雨伞。
+                    </div>
+
+                    <div class="item-meta">
+
+                        <span>
+                            📍 教学楼入口
+                        </span>
+
+                        <span>
+                            🕐 09-25
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="favorite-btn"
+                    onclick="removeFavorite(event, this)"
+                >
+                    ♥
+                </button>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- 空状态 -->
+        <div
+            class="empty-state"
+            id="emptyState"
+        >
+
+            <div class="empty-icon">
+                ♡
+            </div>
+
+            <div class="empty-title">
+                还没有收藏
+            </div>
+
+            <div class="empty-text">
+                浏览失物招领信息时<br>
+                点击 ♥ 就可以收藏啦
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Toast -->
+<div
+    class="toast"
+    id="toast"
+>
+    已取消收藏
+</div>
+  </section>
+  <section class="view" id="view-profile" data-route="profile">
+<div class="phone-frame">
+
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+
+        <button class="back-btn" onclick="goBack()">
+            ‹
+        </button>
+
+        <div class="page-title">
+            个人信息
+        </div>
+
+        <button class="save-btn" onclick="saveInfo()">
+            保存
+        </button>
+
+    </div>
+
+
+    <!-- 页面内容 -->
+    <div class="content">
+
+        <!-- 头像 -->
+        <div class="avatar-section">
+
+            <div class="avatar-wrapper">
+
+                <img id="avatar" class="avatar" src="https://i.pravatar.cc/200?img=12" alt="头像">
+
+                <label class="avatar-edit" for="avatarInput">
+                    ✎
+                </label>
+
+            </div>
+
+            <div class="avatar-tip">
+                点击头像修改
+            </div>
+
+            <input id="avatarInput" type="file" accept="image/*" onchange="changeAvatar(event)">
+
+        </div>
+
+
+        <!-- 基本信息 -->
+        <div class="info-card">
+
+            <div class="section-title">
+                基本信息
+            </div>
+
+            <!-- 姓名 -->
+            <div class="form-item">
+
+                <div class="form-label">
+                    姓名
+                </div>
+
+                <input id="name" class="form-input" type="text" value="马头" placeholder="请输入姓名" maxlength="20">
+
+            </div>
+
+
+            <!-- 个性签名 -->
+            <div class="form-item signature-item">
+
+                <div class="form-label">
+                    个性签名
+                </div>
+
+                <textarea id="signature" class="form-input signature-input" placeholder="写一句介绍自己吧" maxlength="60">牛逼</textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- 联系方式 -->
+        <div class="info-card">
+
+            <div class="section-title">
+                联系方式
+            </div>
+
+
+            <!-- QQ -->
+            <div class="form-item">
+
+                <div class="form-label contact-label">
+
+                    <span class="contact-icon" style="background:#e0f2fe;">
+                        🐧
+                    </span>
+
+                    QQ
+
+                </div>
+
+                <input id="qq" class="form-input" type="text" placeholder="请输入QQ号" inputmode="numeric">
+
+            </div>
+
+
+            <!-- 微信 -->
+            <div class="form-item">
+
+                <div class="form-label contact-label">
+
+                    <span class="contact-icon" style="background:#dcfce7;">
+                        💬
+                    </span>
+
+                    微信
+
+                </div>
+
+                <input id="wechat" class="form-input" type="text" placeholder="请输入微信号">
+
+            </div>
+
+
+            <!-- 电话 -->
+            <div class="form-item">
+
+                <div class="form-label contact-label">
+
+                    <span class="contact-icon" style="background:#fef3c7;">
+                        ☎
+                    </span>
+
+                    电话
+
+                </div>
+
+                <input id="phone" class="form-input" type="tel" placeholder="请输入联系电话" inputmode="tel">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- 保存提示 -->
+<div id="toast" class="toast">
+    保存成功
+</div>
+  </section>
+  <section class="view" id="view-detail" data-route="detail">
+  <div class="phone-frame">
+
+    <div class="top-bar">
+      <button class="top-btn" onclick="goBack()">
+        <span class="back-icon">‹</span>
+        <span>返回</span>
+      </button>
+
+      <div style="font-size:15px; font-weight:600; color:#334155;">物品详情</div>
+
+      <button class="top-btn" onclick="toggleMore()">
+        <span class="more-icon">···</span>
+      </button>
+
+      <div class="more-menu" id="moreMenu">
+        <button class="more-item" onclick="shareItem()">↗　分享</button>
+        <button class="more-item report" onclick="reportItem()">⚑　举报</button>
+      </div>
+    </div>
+
+    <div class="detail-scroll">
+
+      <div class="detail-image">💳</div>
+
+      <div class="detail-content">
+
+        <div class="detail-tags">
+          <span class="status-tag">寻物</span>
+          <span class="type-tag">校园卡</span>
+        </div>
+
+        <div class="detail-title">蓝色校园卡</div>
+
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-icon">📅</span>
+            <span class="info-label">时间</span>
+            <span class="info-value">2026-09-28 14:30</span>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">📍</span>
+            <span class="info-label">地点</span>
+            <span class="info-value">图书馆三楼</span>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">🏷️</span>
+            <span class="info-label">类型</span>
+            <span class="info-value">校园卡</span>
+          </div>
+        </div>
+
+        <div class="section-title">物品描述</div>
+        <div class="description">
+          蓝色校园卡，卡面为蓝色，
+          可能在图书馆三楼学习时不小心遗失。
+          <br><br>
+          如果有同学捡到，希望能够联系我，
+          非常感谢！
+        </div>
+
+        <div class="section-title">发布者</div>
+
+        <div class="publisher-card">
+          <div class="avatar">👤</div>
+          <div class="publisher-info">
+            <div class="publisher-name">小林同学</div>
+            <div class="publisher-time">发布于 2026-09-28 14:30</div>
+          </div>
+        </div>
+
+        <div class="notice">
+          💡 温馨提示：
+          联系对方时请先确认物品特征，
+          避免个人信息泄露。
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="bottom-action">
+      <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
+        <span class="favorite-icon" id="favoriteIcon">♡</span>
+        <span id="favoriteText">收藏</span>
+      </button>
+
+      <button class="contact-btn" onclick="openContact()">联系寻物者</button>
+    </div>
+
+    <div class="modal-mask" id="contactModal" onclick="closeModal(event)">
+      <div class="contact-modal" onclick="event.stopPropagation()">
+        <div class="modal-title">联系寻物者</div>
+        <div class="modal-subtitle">请通过以下方式联系发布者</div>
+
+        <div class="contact-info">
+          <div class="contact-row">📱　联系方式：138****5678</div>
+          <div class="contact-row">💬　微信：xiaolin_123</div>
+        </div>
+
+        <button class="modal-close" onclick="closeAllModal()">关闭</button>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="shareModal" onclick="closeModal(event)">
+      <div class="share-panel" onclick="event.stopPropagation()">
+        <div class="share-title">分享物品信息</div>
+
+        <div class="share-options">
+          <div class="share-option">
+            <div class="share-circle">💬</div>
+            微信
+          </div>
+          <div class="share-option">
+            <div class="share-circle">📱</div>
+            QQ
+          </div>
+          <div class="share-option">
+            <div class="share-circle">🔗</div>
+            复制链接
+          </div>
+        </div>
+
+        <button class="modal-close" onclick="closeAllModal()">取消</button>
+      </div>
+    </div>
+
+    <div class="modal-mask" id="reportModal" onclick="closeModal(event)">
+      <div class="report-panel" onclick="event.stopPropagation()">
+        <div class="report-title">举报该信息</div>
+
+        <button class="report-option" onclick="submitReport('虚假信息')">虚假信息</button>
+        <button class="report-option" onclick="submitReport('联系方式有误')">联系方式有误</button>
+        <button class="report-option" onclick="submitReport('不当内容')">不当内容</button>
+        <button class="report-option" onclick="submitReport('其他问题')">其他问题</button>
+
+        <button class="modal-close" style="margin-top:15px;" onclick="closeAllModal()">取消</button>
+      </div>
+    </div>
+
+  </div>
+
+  
+  </section>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
