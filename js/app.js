@@ -154,6 +154,53 @@
     if (favoriteText) favoriteText.innerText = '收藏';
   }
 
+  function renderHomeList() {
+    var list = $('#homeList');
+    if (!list) return;
+
+    var store = window.LostFoundStore;
+    if (!store || typeof store.getItems !== 'function') {
+      list.innerHTML = '';
+      return;
+    }
+
+    var activeStatus = store.STATUSES ? store.STATUSES.ACTIVE : '进行中';
+    var items = store.filterItems(store.getItems(), { status: activeStatus });
+
+    items.sort(function (a, b) {
+      var timeA = a.time || a.createdAt || '';
+      var timeB = b.time || b.createdAt || '';
+      if (timeA === timeB) return 0;
+      return timeA > timeB ? -1 : 1;
+    });
+
+    list.innerHTML = items.map(function (item) {
+      var id = escapeHtml(item.id);
+      var typeClass = item.type === '招领' ? 'found' : 'lost';
+      var typeLabel = escapeHtml(item.type === '招领' ? '招领' : '寻物');
+      var category = escapeHtml(item.category);
+      var name = escapeHtml(item.name);
+      var time = escapeHtml(item.time);
+      var location = escapeHtml(item.location);
+
+      return (
+        '<div class="list-item" onclick="goToDetail(\'' + id + '\')">' +
+          '<div class="item-image-placeholder"></div>' +
+          '<div class="item-content">' +
+            '<div class="row-first">' +
+              '<span class="tag-status ' + typeClass + '">' + typeLabel + '</span>' +
+              '<span class="tag-item-type">' + category + '</span>' +
+            '</div>' +
+            '<div class="item-name">' + name + '</div>' +
+            '<div class="row-time">📅 ' + time + '</div>' +
+            '<div class="row-location">📍 ' + location + '</div>' +
+            '<div class="detail-link">&gt; 查看详情</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
   function renderRoute() {
     var route = parseHash();
     var view = getView(route.name) || getView('home');
@@ -164,7 +211,9 @@
     view.classList.add('active');
     updateNav(route.name);
 
-    if (route.name === 'detail') {
+    if (route.name === 'home') {
+      renderHomeList();
+    } else if (route.name === 'detail') {
       renderDetail(route.param || 'item1');
     }
 

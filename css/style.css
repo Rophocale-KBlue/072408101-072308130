@@ -229,6 +229,12 @@ body {
       gap: 4px;
       font-weight: 400;
     }
+#view-home .item-name {
+      font-size: 14px;
+      color: #263b52;
+      font-weight: 700;
+      margin-top: 6px;
+    }
 #view-home .detail-link {
       position: absolute;
       bottom: 0;
