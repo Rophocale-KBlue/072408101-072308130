@@ -1,5 +1,5 @@
 (function () {
-  "use strict";
+  ("use strict");
 
   var ROUTES = [
     "home",
@@ -311,6 +311,10 @@
       renderSearchResults(false);
     } else if (route.name === "detail") {
       renderDetail(route.param || "item1");
+    } else if (route.name === "mine") {
+      loadMineProfile();
+    } else if (route.name === "profile") {
+      loadProfile();
     }
 
     window.scrollTo(0, 0);
@@ -906,6 +910,55 @@
   });
 
   // ===== 个人信息 =====
+  // 默认数据
+  var DEFAULT_USER_INFO = {
+    name: "马头",
+    signature: "春风若有怜花意，可否许我再少年",
+    qq: "",
+    wechat: "",
+    phone: "",
+    avatar: "",
+  };
+
+  // 统一读取个人信息
+  function getUserInfo() {
+    var saved = localStorage.getItem("userInfo");
+
+    if (!saved) {
+      return {
+        name: DEFAULT_USER_INFO.name,
+        signature: DEFAULT_USER_INFO.signature,
+        qq: DEFAULT_USER_INFO.qq,
+        wechat: DEFAULT_USER_INFO.wechat,
+        phone: DEFAULT_USER_INFO.phone,
+        avatar: DEFAULT_USER_INFO.avatar,
+      };
+    }
+
+    try {
+      var savedInfo = JSON.parse(saved);
+
+      return {
+        name: savedInfo.name || DEFAULT_USER_INFO.name,
+        signature: savedInfo.signature || DEFAULT_USER_INFO.signature,
+        qq: savedInfo.qq || "",
+        wechat: savedInfo.wechat || "",
+        phone: savedInfo.phone || "",
+        avatar: savedInfo.avatar || "",
+      };
+    } catch (error) {
+      console.log("读取个人信息失败");
+
+      return {
+        name: DEFAULT_USER_INFO.name,
+        signature: DEFAULT_USER_INFO.signature,
+        qq: "",
+        wechat: "",
+        phone: "",
+        avatar: "",
+      };
+    }
+  }
   window.changeAvatar = function (event) {
     var view = event.target.closest(".view");
     var file = event.target.files && event.target.files[0];
@@ -923,39 +976,73 @@
     var view = getView("profile");
     if (!view) return;
 
-    var userInfo = {
-      name: $("#name", view).value,
-      signature: $("#signature", view).value,
-      qq: $("#qq", view).value,
-      wechat: $("#wechat", view).value,
-      phone: $("#phone", view).value,
-      avatar: $("#avatar", view).src,
-    };
+    var avatar = $("#avatar", view);
 
+    var userInfo = {
+      name: $("#name", view).value.trim(),
+      signature: $("#signature", view).value.trim(),
+      qq: $("#qq", view).value.trim(),
+      wechat: $("#wechat", view).value.trim(),
+      phone: $("#phone", view).value.trim(),
+      avatar: avatar ? avatar.src : "",
+    };
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    loadMineProfile();
     window.showToast("保存成功", view);
+    setTimeout(function () {
+      window.location.hash = "mine";
+    }, 500);
   };
 
   function loadProfile() {
     var view = getView("profile");
     if (!view) return;
 
-    var saved = localStorage.getItem("userInfo");
-    if (!saved) return;
+    var userInfo = getUserInfo();
 
-    try {
-      var userInfo = JSON.parse(saved);
-      if (userInfo.name) $("#name", view).value = userInfo.name;
-      if (userInfo.signature) $("#signature", view).value = userInfo.signature;
-      if (userInfo.qq) $("#qq", view).value = userInfo.qq;
-      if (userInfo.wechat) $("#wechat", view).value = userInfo.wechat;
-      if (userInfo.phone) $("#phone", view).value = userInfo.phone;
-      if (userInfo.avatar) $("#avatar", view).src = userInfo.avatar;
-    } catch (error) {
-      window.console.log("读取个人信息失败");
+    var name = $("#name", view);
+    var signature = $("#signature", view);
+    var qq = $("#qq", view);
+    var wechat = $("#wechat", view);
+    var phone = $("#phone", view);
+    var avatar = $("#avatar", view);
+
+    if (name) name.value = userInfo.name;
+    if (signature) signature.value = userInfo.signature;
+    if (qq) qq.value = userInfo.qq;
+    if (wechat) wechat.value = userInfo.wechat;
+    if (phone) phone.value = userInfo.phone;
+
+    if (avatar && userInfo.avatar) {
+      avatar.src = userInfo.avatar;
     }
   }
 
+  function loadMineProfile() {
+    var view = getView("mine");
+    if (!view) return;
+
+    var userInfo = getUserInfo();
+
+    var name = $(".profile-name", view);
+    var signature = $(".profile-signature", view);
+    var avatar = $(".avatar-placeholder", view);
+
+    if (name) {
+      name.textContent = userInfo.name;
+    }
+
+    if (signature) {
+      signature.textContent = userInfo.signature;
+    }
+
+    if (avatar && userInfo.avatar) {
+      avatar.style.backgroundImage = 'url("' + userInfo.avatar + '")';
+      avatar.style.backgroundSize = "cover";
+      avatar.style.backgroundPosition = "center";
+      avatar.style.backgroundRepeat = "no-repeat";
+    }
+  }
   // ===== Toast =====
   window.showToast = function (text, view) {
     var v = view || activeView();
