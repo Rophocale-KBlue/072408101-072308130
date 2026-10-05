@@ -21,7 +21,7 @@
  * }
  */
 (function (global) {
-  "use strict";
+  ("use strict");
 
   var STORAGE_KEY = "lost_found_items";
 
@@ -185,6 +185,30 @@
     return String(Math.floor(100000 + Math.random() * 900000));
   }
 
+  // 记录当前用户本地ID
+  var CURRENT_USER_KEY = "campus_lost_found_user_id";
+
+  function getCurrentUserId() {
+    try {
+      var userId = global.localStorage.getItem(CURRENT_USER_KEY);
+
+      if (!userId) {
+        userId =
+          "user_" +
+          Date.now().toString(36) +
+          "_" +
+          Math.random().toString(36).slice(2, 8);
+
+        global.localStorage.setItem(CURRENT_USER_KEY, userId);
+      }
+
+      return userId;
+    } catch (error) {
+      // localStorage 不可用时，使用一个临时 ID
+      return "local_user";
+    }
+  }
+
   function normalizeText(value) {
     return String(value || "")
       .trim()
@@ -219,13 +243,14 @@
     }
   }
 
-  // 纯函数：根据输入生成一条完整记录，不写存储。
   function createItem(input) {
     input = input || {};
 
     var type = TYPE_VALUES.indexOf(input.type) !== -1 ? input.type : TYPES.LOST;
+
     var category =
       CATEGORIES.indexOf(input.category) !== -1 ? input.category : "其他";
+
     var status =
       STATUS_VALUES.indexOf(input.status) !== -1
         ? input.status
@@ -233,7 +258,13 @@
 
     return {
       id: input.id || generateId(),
+
+      // 发布类型
       type: type,
+
+      // 当前发布者
+      ownerId: input.ownerId || getCurrentUserId(),
+
       name: String(input.name || "").trim(),
       category: category,
       location: String(input.location || "").trim(),
@@ -406,6 +437,7 @@
     TYPES: TYPES,
     STATUSES: STATUSES,
     CATEGORIES: CATEGORIES,
+    getCurrentUserId: getCurrentUserId,
     seedIfNeeded: seedIfNeeded,
     createItem: createItem,
     addItem: addItem,

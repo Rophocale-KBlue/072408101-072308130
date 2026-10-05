@@ -1623,7 +1623,7 @@ body {
   cursor: pointer;
 }
 #view-myLost .empty-state {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -1968,7 +1968,7 @@ body {
   cursor: pointer;
 }
 #view-myFound .empty-state {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
