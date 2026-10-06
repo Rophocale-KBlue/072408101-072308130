@@ -361,6 +361,24 @@
     window.location.hash = "myFound";
   };
 
+  window.goToMyPublished = function () {
+    var lastPublishedItem = null;
+
+    try {
+      lastPublishedItem = JSON.parse(
+        sessionStorage.getItem("lastPublishedItem") || "null"
+      );
+    } catch (error) {
+      lastPublishedItem = null;
+    }
+
+    if (lastPublishedItem && lastPublishedItem.type === "招领") {
+      window.location.hash = "myFound";
+    } else {
+      window.location.hash = "myLost";
+    }
+  };
+
   window.goToMyFavorites = function () {
     window.location.hash = "favorites";
   };
@@ -453,6 +471,7 @@
     var contact = $("#contactInput", view);
     var description = $("textarea", view);
     var imageInput = $("#imageInput", view);
+    var publishContent = $("#publishContent", view);
 
     // ===== 检查必填项 =====
     var valid =
@@ -486,7 +505,10 @@
     // ===== 判断发布类型 =====
     // publishContent 当前会根据 selectType() 添加：
     // lost-mode / found-mode
-    var type = view.classList.contains("found-mode") ? "招领" : "寻物";
+    var type =
+      publishContent && publishContent.classList.contains("found-mode")
+        ? "招领"
+        : "寻物";
 
     // ===== 基础数据 =====
     var newItem = {
