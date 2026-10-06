@@ -725,15 +725,16 @@
   // 渲染我的寻物
   function renderMyLostList() {
     var view = getView("myLost");
+    var store = window.LostFoundStore;
 
-    if (!view || !window.LostFoundStore) {
+    if (!view || !store) {
       return;
     }
 
-    var allItems = LostFoundStore.getItems();
+    var allItems = store.getItems();
 
     // 当前用户
-    var currentUserId = LostFoundStore.getCurrentUserId();
+    var currentUserId = store.getCurrentUserId();
 
     // 只显示“当前用户自己发布的寻物”
     var items = allItems.filter(function (item) {
@@ -779,14 +780,15 @@
   // 渲染我的招领
   function renderMyFoundList() {
     var view = getView("myFound");
+    var store = window.LostFoundStore;
 
-    if (!view || !window.LostFoundStore) {
+    if (!view || !store) {
       return;
     }
 
-    var allItems = LostFoundStore.getItems();
+    var allItems = store.getItems();
 
-    var currentUserId = LostFoundStore.getCurrentUserId();
+    var currentUserId = store.getCurrentUserId();
 
     // 只显示当前用户自己发布的招领
     var items = allItems.filter(function (item) {
@@ -1455,6 +1457,48 @@
       avatar.style.backgroundSize = "cover";
       avatar.style.backgroundPosition = "center";
       avatar.style.backgroundRepeat = "no-repeat";
+    }
+
+    updateMineBadges();
+  }
+
+  function updateMineBadges() {
+    var view = getView("mine");
+    if (!view || !window.LostFoundStore) {
+      return;
+    }
+
+    var currentUserId = window.LostFoundStore.getCurrentUserId();
+    var items = window.LostFoundStore.getItems();
+    var lostCount = 0;
+    var foundCount = 0;
+
+    items.forEach(function (item) {
+      if (item.ownerId !== currentUserId) {
+        return;
+      }
+      if (item.type === "寻物") {
+        lostCount++;
+      } else if (item.type === "招领") {
+        foundCount++;
+      }
+    });
+
+    var favoriteCount = document.querySelectorAll(
+      "#view-favorites .favorite-card"
+    ).length;
+
+    setMineBadge("myLost", lostCount);
+    setMineBadge("myFound", foundCount);
+    setMineBadge("favorites", favoriteCount);
+  }
+
+  function setMineBadge(key, count) {
+    var badge = document.querySelector(
+      '#view-mine [data-mine-badge="' + key + '"]'
+    );
+    if (badge) {
+      badge.textContent = count;
     }
   }
   // ===== Toast =====

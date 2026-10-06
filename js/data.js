@@ -15,6 +15,7 @@
  *   description: string,
  *   contact: string,
  *   image: string,
+ *   ownerId: string,
  *   status: '进行中' | '已找到' | '已归还',
  *   secret: string,
  *   createdAt: string

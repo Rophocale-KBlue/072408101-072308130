@@ -1031,6 +1031,30 @@ body {
   flex-shrink: 0;
   margin-left: 10px;
 }
+#view-mine .menu-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+#view-mine .menu-right .menu-arrow {
+  margin-left: 0;
+}
+#view-mine .menu-badge {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf2ff;
+  color: #3566c6;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
 #view-mine .bottom-nav {
   position: static;
   width: 100%;
