@@ -400,7 +400,7 @@
       id: record.id,
       type: isFound ? "found" : "lost",
       category: record.category,
-      image: CATEGORY_IMAGE[record.category] || CATEGORY_IMAGE["其他"],
+      image: record.image || CATEGORY_IMAGE[record.category] || CATEGORY_IMAGE["其他"],
       title: record.name,
       location: record.location,
       time: record.time,

@@ -226,7 +226,7 @@
     var name = escapeHtml(item.name);
     var time = escapeHtml(item.time);
     var location = escapeHtml(item.location);
-    var image = homeCategoryImage(item.category);
+    var image = item.image || homeCategoryImage(item.category);
 
     return (
       '<div class="list-item" onclick="goToDetail(\'' +
@@ -1107,7 +1107,7 @@
     var name = escapeHtml(item.name || "未命名物品");
     var time = escapeHtml(item.time || "时间未知");
     var location = escapeHtml(item.location || "地点未知");
-    var image = escapeHtml(getSearchImage(item.category));
+    var image = escapeHtml(item.image || getSearchImage(item.category));
 
     return (
       '<div class="list-item" onclick="openDetail(\'' +
