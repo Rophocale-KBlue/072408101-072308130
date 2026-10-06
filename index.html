@@ -765,7 +765,7 @@
 
             <div class="page-title">我的收藏</div>
 
-            <div class="count-text" id="countText">4 条</div>
+            <div class="count-text" id="countText">0 条</div>
           </div>
 
           <!-- 内容 -->
@@ -774,195 +774,31 @@
             <div class="filter-bar">
               <button
                 class="filter-btn active"
+                data-filter="all"
                 onclick="filterItems('all', this)"
               >
                 全部
               </button>
 
-              <button class="filter-btn" onclick="filterItems('lost', this)">
+              <button
+                class="filter-btn"
+                data-filter="lost"
+                onclick="filterItems('lost', this)"
+              >
                 寻物
               </button>
 
-              <button class="filter-btn" onclick="filterItems('found', this)">
+              <button
+                class="filter-btn"
+                data-filter="found"
+                onclick="filterItems('found', this)"
+              >
                 招领
               </button>
             </div>
 
             <!-- 收藏列表 -->
             <div class="favorite-list" id="favoriteList">
-              <!-- 蓝色校园卡 -->
-              <div
-                class="favorite-card"
-                data-type="lost"
-                data-id="card"
-                onclick="openDetail('card')"
-              >
-                <div class="item-image">
-                  <img
-                    class="item-image-real"
-                    src="images/campus-card.jpg"
-                    alt="蓝色校园卡"
-                  />
-                </div>
-
-                <div class="item-info">
-                  <div class="item-top">
-                    <span class="status lost"> 寻物 </span>
-
-                    <div class="item-title">蓝色校园卡</div>
-                  </div>
-
-                  <div class="item-desc">
-                    在图书馆三楼附近丢失，希望有同学帮忙留意。
-                  </div>
-
-                  <div class="item-meta">
-                    <span> 📍 图书馆三楼 </span>
-
-                    <span> 🕐 09-28 </span>
-                  </div>
-                </div>
-
-                <button
-                  class="favorite-btn"
-                  onclick="removeFavorite(event, this)"
-                  title="取消收藏"
-                >
-                  ♥
-                </button>
-              </div>
-
-              <!-- 黑色钥匙 -->
-              <div
-                class="favorite-card"
-                data-type="found"
-                data-id="keys"
-                onclick="openDetail('keys')"
-              >
-                <div
-                  class="item-image"
-                  style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0)"
-                >
-                  <img
-                    class="item-image-real"
-                    src="images/keys.jpg"
-                    alt="一串黑色钥匙"
-                  />
-                </div>
-
-                <div class="item-info">
-                  <div class="item-top">
-                    <span class="status found"> 招领 </span>
-
-                    <div class="item-title">一串黑色钥匙</div>
-                  </div>
-
-                  <div class="item-desc">
-                    在食堂二楼发现一串黑色钥匙，请失主及时联系。
-                  </div>
-
-                  <div class="item-meta">
-                    <span> 📍 食堂二楼 </span>
-
-                    <span> 🕐 09-27 </span>
-                  </div>
-                </div>
-
-                <button
-                  class="favorite-btn"
-                  onclick="removeFavorite(event, this)"
-                >
-                  ♥
-                </button>
-              </div>
-
-              <!-- 白色耳机 -->
-              <div
-                class="favorite-card"
-                data-type="lost"
-                data-id="earphone"
-                onclick="openDetail('earphone')"
-              >
-                <div
-                  class="item-image"
-                  style="background: linear-gradient(135deg, #f8fafc, #e2e8f0)"
-                >
-                  <img
-                    class="item-image-real"
-                    src="images/earphones.jpg"
-                    alt="白色无线耳机"
-                  />
-                </div>
-
-                <div class="item-info">
-                  <div class="item-top">
-                    <span class="status lost"> 寻物 </span>
-
-                    <div class="item-title">白色无线耳机</div>
-                  </div>
-
-                  <div class="item-desc">
-                    白色蓝牙耳机，可能遗落在教学楼自习室。
-                  </div>
-
-                  <div class="item-meta">
-                    <span> 📍 教学楼 </span>
-
-                    <span> 🕐 09-26 </span>
-                  </div>
-                </div>
-
-                <button
-                  class="favorite-btn"
-                  onclick="removeFavorite(event, this)"
-                >
-                  ♥
-                </button>
-              </div>
-
-              <!-- 黑色雨伞 -->
-              <div
-                class="favorite-card"
-                data-type="found"
-                data-id="umbrella"
-                onclick="openDetail('umbrella')"
-              >
-                <div
-                  class="item-image"
-                  style="background: linear-gradient(135deg, #eef2ff, #dbeafe)"
-                >
-                  <img
-                    class="item-image-real"
-                    src="images/umbrella.jpg"
-                    alt="黑色长柄雨伞"
-                  />
-                </div>
-
-                <div class="item-info">
-                  <div class="item-top">
-                    <span class="status found"> 招领 </span>
-
-                    <div class="item-title">黑色长柄雨伞</div>
-                  </div>
-
-                  <div class="item-desc">
-                    在教学楼入口处发现一把黑色长柄雨伞。
-                  </div>
-
-                  <div class="item-meta">
-                    <span> 📍 教学楼入口 </span>
-
-                    <span> 🕐 09-25 </span>
-                  </div>
-                </div>
-
-                <button
-                  class="favorite-btn"
-                  onclick="removeFavorite(event, this)"
-                >
-                  ♥
-                </button>
-              </div>
             </div>
 
             <!-- 空状态 -->

@@ -24,7 +24,8 @@
     "my-favorites": "favorites",
   };
 
-  var detailFavorite = false;
+  var currentDetailId = "";
+  var favoriteFilterType = "all";
   var searchCategory = "全部";
   var homeCategory = "全部";
 
@@ -128,6 +129,7 @@
     if (!view) return;
 
     var item = getDetailItem(id);
+    currentDetailId = item.id || "";
     var isFound = item.type === "found";
 
     var image = $(".detail-image", view);
@@ -171,10 +173,12 @@
       contactRows[0].textContent = "📱　联系方式：" + item.contact;
     if (contactRows[1]) contactRows[1].textContent = "💬　微信：" + item.wechat;
 
-    detailFavorite = false;
-    if (favoriteBtn) favoriteBtn.classList.remove("active");
-    if (favoriteIcon) favoriteIcon.innerText = "♡";
-    if (favoriteText) favoriteText.innerText = "收藏";
+    updateFavoriteButton(
+      favoriteBtn,
+      favoriteIcon,
+      favoriteText,
+      window.LostFoundStore && window.LostFoundStore.isFavorite(currentDetailId)
+    );
   }
 
   function renderHomeList() {
@@ -315,6 +319,8 @@
       renderMyLostList();
     } else if (route.name === "myFound") {
       renderMyFoundList();
+    } else if (route.name === "favorites") {
+      renderFavorites();
     } else if (route.name === "mine") {
       loadMineProfile();
     } else if (route.name === "profile") {
@@ -944,64 +950,155 @@
   };
 
   // ===== 我的收藏 =====
-  function favoriteFilter(type, btn) {
-    var view = btn.closest(".view");
-    if (!view) return;
+  function getFavoriteRecords() {
+    var store = window.LostFoundStore;
+    if (!store || typeof store.getFavorites !== "function") {
+      return [];
+    }
 
-    var buttons = $$(".filter-btn", view);
-    var cards = $$(".favorite-card", view);
-    var visibleCount = 0;
+    var ids = store.getFavorites();
+    var records = [];
 
-    buttons.forEach(function (item) {
-      item.classList.remove("active");
-    });
-    btn.classList.add("active");
-
-    cards.forEach(function (card) {
-      var cardType = card.getAttribute("data-type");
-      var show = type === "all" || cardType === type;
-      card.style.display = show ? "flex" : "none";
-      if (show) visibleCount++;
+    ids.forEach(function (id) {
+      var record = store.getItemById(id);
+      if (record) {
+        records.push(record);
+      }
     });
 
-    updateFavoriteEmpty(view, visibleCount);
+    return records;
   }
 
-  function updateFavoriteCount(view) {
-    var cards = $$(".favorite-card", view);
-    var countText = $("#countText", view);
-    if (countText) countText.textContent = cards.length + " 条";
+  function favoriteCardHtml(record) {
+    var id = escapeHtml(record.id);
+    var isFound = record.type === "招领";
+    var type = isFound ? "found" : "lost";
+    var typeLabel = isFound ? "招领" : "寻物";
+    var name = escapeHtml(record.name || "未命名物品");
+    var location = escapeHtml(record.location || "地点未知");
+    var time = escapeHtml(record.time || "时间未知");
+    var description = escapeHtml(record.description || "暂无描述");
+    var image = escapeHtml(
+      record.image || getItemImage(record.category)
+    );
+
+    return (
+      '<div class="favorite-card" data-type="' +
+      type +
+      '" data-id="' +
+      id +
+      '" onclick="openDetail(\'' +
+      id +
+      "')\">" +
+      '<div class="item-image">' +
+      '<img class="item-image-real" src="' +
+      image +
+      '" alt="' +
+      name +
+      '">' +
+      "</div>" +
+      '<div class="item-info">' +
+      '<div class="item-top">' +
+      '<span class="status ' +
+      type +
+      '"> ' +
+      typeLabel +
+      " </span>" +
+      '<div class="item-title">' +
+      name +
+      "</div>" +
+      "</div>" +
+      '<div class="item-desc">' +
+      description +
+      "</div>" +
+      '<div class="item-meta">' +
+      "<span> 📍 " +
+      location +
+      "</span>" +
+      "<span> 🕐 " +
+      time +
+      "</span>" +
+      "</div>" +
+      "</div>" +
+      '<button class="favorite-btn" ' +
+      'onclick="removeFavorite(event, this)" ' +
+      'data-favorite-id="' +
+      id +
+      '" ' +
+      'title="取消收藏">♥</button>' +
+      "</div>"
+    );
   }
 
-  function updateFavoriteEmpty(view, count) {
+  function renderFavorites() {
+    var view = getView("favorites");
+    if (!view || !window.LostFoundStore) {
+      return;
+    }
+
+    var allRecords = getFavoriteRecords();
+    var records = allRecords.slice();
+
+    if (favoriteFilterType === "lost") {
+      records = records.filter(function (item) {
+        return item.type !== "招领";
+      });
+    } else if (favoriteFilterType === "found") {
+      records = records.filter(function (item) {
+        return item.type === "招领";
+      });
+    }
+
     var list = $("#favoriteList", view);
     var empty = $("#emptyState", view);
-    if (!list || !empty) return;
+    var countText = $("#countText", view);
 
-    if (count === 0) {
-      list.style.display = "none";
-      empty.style.display = "flex";
-    } else {
-      list.style.display = "flex";
-      empty.style.display = "none";
+    if (countText) {
+      countText.textContent = allRecords.length + " 条";
     }
+    if (list) {
+      list.innerHTML = records.map(favoriteCardHtml).join("");
+      list.style.display = records.length ? "flex" : "none";
+    }
+    if (empty) {
+      empty.style.display = records.length ? "none" : "flex";
+      var emptyTitle = $(".empty-title", empty);
+      var emptyText = $(".empty-text", empty);
+      if (allRecords.length === 0) {
+        if (emptyTitle) emptyTitle.textContent = "还没有收藏";
+        if (emptyText) {
+          emptyText.innerHTML =
+            "浏览失物招领信息时<br />点击 ♥ 就可以收藏啦";
+        }
+      } else {
+        if (emptyTitle) emptyTitle.textContent = "没有符合筛选的收藏";
+        if (emptyText) {
+          emptyText.textContent = "试试切换寻物或招领筛选";
+        }
+      }
+    }
+
+    $$(".filter-btn", view).forEach(function (btn) {
+      var filter = btn.getAttribute("data-filter");
+      btn.classList.toggle("active", filter === favoriteFilterType);
+    });
   }
 
   window.removeFavorite = function (event, button) {
     event.stopPropagation();
     var view = button.closest(".view");
-    if (!view) return;
-
     var card = button.closest(".favorite-card");
-    if (card) card.remove();
-    updateFavoriteCount(view);
-    window.showToast("已取消收藏", view);
+    var id =
+      button.getAttribute("data-favorite-id") ||
+      (card ? card.getAttribute("data-id") : "");
 
-    var visibleCount = 0;
-    $$(".favorite-card", view).forEach(function (item) {
-      if (item.style.display !== "none") visibleCount++;
-    });
-    updateFavoriteEmpty(view, visibleCount);
+    if (!view || !id || !window.LostFoundStore) {
+      return;
+    }
+
+    window.LostFoundStore.removeFavorite(id);
+    renderFavorites();
+    window.showToast("已取消收藏", view);
   };
 
   // ===== 统一处理“我的寻物 / 我的招领 / 我的收藏”筛选 =====
@@ -1015,7 +1112,8 @@
 
     // 我的收藏
     if (route === "favorites") {
-      favoriteFilter(filter, btn);
+      favoriteFilterType = filter || "all";
+      renderFavorites();
       return;
     }
 
@@ -1278,23 +1376,38 @@
 
   window.toggleFavorite = function () {
     var view = getView("detail");
-    if (!view) return;
+    var store = window.LostFoundStore;
+    if (!view || !store || !currentDetailId) return;
 
-    detailFavorite = !detailFavorite;
+    if (store.isFavorite(currentDetailId)) {
+      store.removeFavorite(currentDetailId);
+    } else {
+      store.addFavorite(currentDetailId);
+    }
+
     var button = $("#favoriteBtn", view);
     var icon = $("#favoriteIcon", view);
     var text = $("#favoriteText", view);
 
-    if (detailFavorite) {
-      button.classList.add("active");
-      icon.innerText = "♥";
-      text.innerText = "已收藏";
-    } else {
-      button.classList.remove("active");
-      icon.innerText = "♡";
-      text.innerText = "收藏";
-    }
+    updateFavoriteButton(
+      button,
+      icon,
+      text,
+      store.isFavorite(currentDetailId)
+    );
   };
+
+  function updateFavoriteButton(button, icon, text, isFavorite) {
+    if (button) {
+      button.classList.toggle("active", isFavorite);
+    }
+    if (icon) {
+      icon.innerText = isFavorite ? "♥" : "♡";
+    }
+    if (text) {
+      text.innerText = isFavorite ? "已收藏" : "收藏";
+    }
+  }
 
   window.openContact = function () {
     var view = getView("detail");
@@ -1506,9 +1619,10 @@
       }
     });
 
-    var favoriteCount = document.querySelectorAll(
-      "#view-favorites .favorite-card"
-    ).length;
+    var favoriteCount =
+      typeof window.LostFoundStore.getFavorites === "function"
+        ? window.LostFoundStore.getFavorites().length
+        : 0;
 
     setMineBadge("myLost", lostCount);
     setMineBadge("myFound", foundCount);

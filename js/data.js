@@ -25,6 +25,7 @@
   ("use strict");
 
   var STORAGE_KEY = "lost_found_items";
+  var FAVORITES_KEY = "lost_found_favorites";
 
   var TYPES = {
     LOST: "寻物",
@@ -394,6 +395,62 @@
     return null;
   }
 
+  // ===== 收藏数据层 =====
+  function readFavoriteIds() {
+    try {
+      var raw = global.localStorage.getItem(FAVORITES_KEY);
+      var ids = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(ids)) {
+        return [];
+      }
+      return ids.filter(function (id) {
+        return typeof id === "string" && id.length > 0;
+      });
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeFavoriteIds(ids) {
+    try {
+      global.localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids));
+    } catch (error) {
+      // localStorage 不可用时收藏无法持久化，调用方仍可安全继续执行。
+    }
+  }
+
+  function addFavorite(id) {
+    var favoriteId = String(id || "");
+    if (!favoriteId) {
+      return getFavorites();
+    }
+
+    var ids = readFavoriteIds();
+    if (ids.indexOf(favoriteId) === -1) {
+      ids.push(favoriteId);
+      writeFavoriteIds(ids);
+    }
+
+    return getFavorites();
+  }
+
+  function removeFavorite(id) {
+    var favoriteId = String(id || "");
+    var ids = readFavoriteIds().filter(function (item) {
+      return item !== favoriteId;
+    });
+    writeFavoriteIds(ids);
+    return getFavorites();
+  }
+
+  function getFavorites() {
+    return readFavoriteIds();
+  }
+
+  function isFavorite(id) {
+    return readFavoriteIds().indexOf(String(id || "")) !== -1;
+  }
+
   // 保持当前详情页可读：把新数据模型转换成旧版 app.js 期望的字段。
   function toAppItem(record) {
     var isFound = record.type === TYPES.FOUND;
@@ -447,6 +504,10 @@
     searchItems: searchItems,
     filterItems: filterItems,
     updateStatus: updateStatus,
+    addFavorite: addFavorite,
+    removeFavorite: removeFavorite,
+    getFavorites: getFavorites,
+    isFavorite: isFavorite,
   };
 
   global.LostFoundStore = Store;
