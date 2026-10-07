@@ -15,6 +15,7 @@
  *   description: string,
  *   contact: string,
  *   image: string,
+ *   ownerId: string,
  *   status: '进行中' | '已找到' | '已归还',
  *   secret: string,
  *   createdAt: string
@@ -24,6 +25,7 @@
   ("use strict");
 
   var STORAGE_KEY = "lost_found_items";
+  var FAVORITES_KEY = "lost_found_favorites";
 
   var TYPES = {
     LOST: "寻物",
@@ -393,6 +395,121 @@
     return null;
   }
 
+  function updateItem(id, input) {
+    seedIfNeeded();
+
+    input = input || {};
+
+    var items = readItems();
+
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].id !== id) {
+        continue;
+      }
+
+      // 只能修改自己的记录
+      if (items[i].ownerId !== getCurrentUserId()) {
+        return null;
+      }
+
+      items[i].type = input.type === TYPES.FOUND ? TYPES.FOUND : TYPES.LOST;
+
+      if (input.name !== undefined) {
+        items[i].name = String(input.name).trim();
+      }
+
+      if (input.category !== undefined) {
+        items[i].category =
+          CATEGORIES.indexOf(input.category) !== -1 ? input.category : "其他";
+      }
+
+      if (input.location !== undefined) {
+        items[i].location = String(input.location).trim();
+      }
+
+      if (input.time !== undefined) {
+        items[i].time = String(input.time).trim();
+      }
+
+      if (input.description !== undefined) {
+        items[i].description = String(input.description).trim();
+      }
+
+      if (input.contact !== undefined) {
+        items[i].contact = String(input.contact).trim();
+      }
+
+      if (input.image !== undefined) {
+        items[i].image = input.image || "";
+      }
+
+      writeItems(items);
+
+      // 更新详情页数据
+      buildAppData();
+
+      return items[i];
+    }
+
+    return null;
+  }
+
+  // ===== 收藏数据层 =====
+  function readFavoriteIds() {
+    try {
+      var raw = global.localStorage.getItem(FAVORITES_KEY);
+      var ids = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(ids)) {
+        return [];
+      }
+      return ids.filter(function (id) {
+        return typeof id === "string" && id.length > 0;
+      });
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeFavoriteIds(ids) {
+    try {
+      global.localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids));
+    } catch (error) {
+      // localStorage 不可用时收藏无法持久化，调用方仍可安全继续执行。
+    }
+  }
+
+  function addFavorite(id) {
+    var favoriteId = String(id || "");
+    if (!favoriteId) {
+      return getFavorites();
+    }
+
+    var ids = readFavoriteIds();
+    if (ids.indexOf(favoriteId) === -1) {
+      ids.push(favoriteId);
+      writeFavoriteIds(ids);
+    }
+
+    return getFavorites();
+  }
+
+  function removeFavorite(id) {
+    var favoriteId = String(id || "");
+    var ids = readFavoriteIds().filter(function (item) {
+      return item !== favoriteId;
+    });
+    writeFavoriteIds(ids);
+    return getFavorites();
+  }
+
+  function getFavorites() {
+    return readFavoriteIds();
+  }
+
+  function isFavorite(id) {
+    return readFavoriteIds().indexOf(String(id || "")) !== -1;
+  }
+
   // 保持当前详情页可读：把新数据模型转换成旧版 app.js 期望的字段。
   function toAppItem(record) {
     var isFound = record.type === TYPES.FOUND;
@@ -400,7 +517,10 @@
       id: record.id,
       type: isFound ? "found" : "lost",
       category: record.category,
-      image: CATEGORY_IMAGE[record.category] || CATEGORY_IMAGE["其他"],
+      image:
+        record.image ||
+        CATEGORY_IMAGE[record.category] ||
+        CATEGORY_IMAGE["其他"],
       title: record.name,
       location: record.location,
       time: record.time,
@@ -446,6 +566,11 @@
     searchItems: searchItems,
     filterItems: filterItems,
     updateStatus: updateStatus,
+    updateItem: updateItem,
+    addFavorite: addFavorite,
+    removeFavorite: removeFavorite,
+    getFavorites: getFavorites,
+    isFavorite: isFavorite,
   };
 
   global.LostFoundStore = Store;
