@@ -4313,3 +4313,114 @@ button {
   max-width: 640px;
   margin: 0 auto;
 }
+
+/* ===== 编辑信息页 ===== */
+
+#view-editItem .view-inner {
+  width: 400px;
+  max-width: 100%;
+  min-height: 100vh;
+  background: #f7f9fc;
+  margin: 0 auto;
+}
+
+#view-editItem .page-header {
+  padding: 22px 20px 14px;
+  background: linear-gradient(135deg, #e6f2ff 0%, #f3f8ff 55%, #ffffff 100%);
+}
+
+#view-editItem .page-title {
+  font-size: 23px;
+  font-weight: 750;
+  color: #19324f;
+}
+
+#view-editItem .page-subtitle {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #8195ad;
+}
+
+#view-editItem .publish-content {
+  padding: 12px 16px 30px;
+}
+
+#view-editItem .type-switch {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+#view-editItem .type-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: #edf1f6;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#view-editItem .type-btn.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #f5a34a, #e8872e);
+}
+
+#view-editItem.found-mode .type-btn.active {
+  background: linear-gradient(135deg, #4a8cf0, #2b6ed9);
+}
+
+#view-editItem .form-group {
+  margin-bottom: 16px;
+}
+
+#view-editItem .input-box,
+#view-editItem .textarea-box {
+  width: 100%;
+}
+
+#view-editItem .textarea-box {
+  min-height: 100px;
+  resize: vertical;
+}
+
+#view-editItem .publish-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* ===== 编辑页：完全复用发布页的表单视觉 ===== */
+#view-editItem .type-switch{display:flex;width:100%;background:rgba(255,255,255,.88);padding:5px;margin-bottom:18px;border-radius:17px;border:1px solid rgba(225,233,242,.9);box-shadow:0 4px 14px rgba(43,79,115,.06)}
+#view-editItem .type-btn{flex:1;height:46px;border:none;border-radius:13px;background:transparent;font-size:15px;font-weight:650;color:#8b9bb0;cursor:pointer;transition:all .18s ease}
+#view-editItem .type-btn.active{color:#fff;background:linear-gradient(135deg,#f6a04d,#ed7d32);box-shadow:0 5px 12px rgba(237,125,50,.24)}
+#view-editItem.found-mode .type-btn.active{background:linear-gradient(135deg,#5da9ed,#367fc5);box-shadow:0 5px 12px rgba(54,127,197,.24)}
+#view-editItem .form-group{margin-bottom:16px}
+#view-editItem .form-label{display:flex;align-items:center;gap:3px;margin-bottom:7px;font-size:13px;font-weight:650;color:#31465e}
+#view-editItem .required{color:#ed7d32;font-size:15px}
+#view-editItem.found-mode .required{color:#367fc5}
+#view-editItem .input-box{width:100%;height:45px;box-sizing:border-box;border-radius:12px;border:1px solid #e2e9f1;background:rgba(249,251,253,.94);padding:0 13px;outline:none;color:#273d55;font-size:13px;transition:all .15s ease}
+#view-editItem .input-box::placeholder{color:#b1bdcb}
+#view-editItem .input-box:focus{background:#fff;border-color:#e7a46c;box-shadow:0 0 0 3px rgba(237,125,50,.08)}
+#view-editItem.found-mode .input-box:focus{border-color:#6fa8dc;box-shadow:0 0 0 3px rgba(54,127,197,.08)}
+#view-editItem select.input-box{appearance:none;-webkit-appearance:none;padding-right:38px;color:#536a82;cursor:pointer}
+#view-editItem .datetime-row{display:flex;gap:10px}
+#view-editItem .datetime-row .input-box{flex:1;min-width:0}
+#view-editItem input[type=date],#view-editItem input[type=time]{color:#273d55}
+#view-editItem .textarea-box{width:100%;min-height:88px;box-sizing:border-box;resize:none;border-radius:12px;border:1px solid #e2e9f1;background:rgba(249,251,253,.94);padding:12px 13px;outline:none;color:#273d55;font-size:13px;line-height:1.6;transition:all .15s ease}
+#view-editItem .textarea-box::placeholder{color:#b1bdcb}
+#view-editItem .textarea-box:focus{background:#fff;border-color:#6fa8dc;box-shadow:0 0 0 3px rgba(54,127,197,.07)}
+#view-editItem .upload-area{width:100%;min-height:92px;box-sizing:border-box;border-radius:14px;border:1px dashed #d7e0eb;background:rgba(255,255,255,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s ease}
+#view-editItem .upload-area:hover{background:#fff;border-color:#6fa8dc}
+#view-editItem .upload-icon{font-size:26px;line-height:1;color:#7b9cc2;margin-bottom:6px}
+#view-editItem .upload-title{font-size:13px;font-weight:650;color:#50657c}
+#view-editItem .upload-subtitle{margin-top:3px;font-size:11px;color:#a6b2c0}
+#view-editItem input[type=file]{display:none}
+#view-editItem .publish-btn{width:100%;height:48px;margin-top:10px;border:none;border-radius:14px;color:#fff;background:linear-gradient(135deg,#5da9ed,#367fc5);box-shadow:0 6px 16px rgba(54,127,197,.22);font-size:15px;font-weight:700;cursor:pointer;transition:all .18s ease}
+#view-editItem .publish-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(54,127,197,.26)}
+#view-editItem .publish-btn:active{transform:translateY(0)}
+
+/* ===== 我的列表：编辑按钮 ===== */
+#view-myLost .card-actions .edit-item-btn,#view-myFound .card-actions .edit-item-btn{display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 14px;margin-left:6px;border:none;border-radius:10px;background:#1e3a8a;color:#fff;font-size:12px;font-weight:650;line-height:1;cursor:pointer;box-shadow:0 3px 9px rgba(30,58,138,.18);transition:all .18s ease;vertical-align:middle}
+#view-myLost .card-actions .edit-item-btn:hover,#view-myFound .card-actions .edit-item-btn:hover{background:#193478;transform:translateY(-1px)}
+#view-myLost .card-actions .edit-item-btn:active,#view-myFound .card-actions .edit-item-btn:active{transform:translateY(0)}

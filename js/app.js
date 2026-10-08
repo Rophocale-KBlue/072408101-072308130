@@ -11,6 +11,7 @@
     "myFound",
     "favorites",
     "profile",
+    "editItem",
     "publishSuccess",
     "publishFailure",
   ];
@@ -28,6 +29,8 @@
   var favoriteFilterType = "all";
   var searchCategory = "全部";
   var homeCategory = "全部";
+  var detailBackRoute = "home"; // 记录进入详情页之前的页面
+  var editingItemId = ""; // 当前正在编辑的物品
 
   function $(selector, root) {
     return (root || document).querySelector(selector);
@@ -131,6 +134,21 @@
     var item = getDetailItem(id);
     currentDetailId = item.id || "";
     var isFound = item.type === "found";
+
+    var detailEditBtn = $("#detailEditBtn", view);
+    if (detailEditBtn) {
+      var store = window.LostFoundStore;
+      var canEdit = false;
+      if (
+        store &&
+        typeof store.getItemById === "function" &&
+        typeof store.getCurrentUserId === "function"
+      ) {
+        var record = store.getItemById(currentDetailId);
+        canEdit = record && record.ownerId === store.getCurrentUserId();
+      }
+      detailEditBtn.style.display = canEdit ? "block" : "none";
+    }
 
     var image = $(".detail-image", view);
     var status = $(".status-tag", view);
@@ -325,6 +343,8 @@
       loadMineProfile();
     } else if (route.name === "profile") {
       loadProfile();
+    } else if (route.name === "editItem") {
+      loadEditItem();
     }
 
     window.scrollTo(0, 0);
@@ -332,6 +352,12 @@
 
   // ===== 路由跳转 =====
   window.goToDetail = function (id) {
+    var view = activeView();
+    var route = view ? view.getAttribute("data-route") : "home";
+    // 详情页不要记录成 detail
+    if (route !== "detail") {
+      detailBackRoute = route || "home";
+    }
     window.location.hash = "detail/" + id;
   };
 
@@ -352,6 +378,11 @@
   };
 
   window.openDetail = function (id) {
+    var view = activeView();
+    var route = view ? view.getAttribute("data-route") : "home";
+    if (route !== "detail") {
+      detailBackRoute = route || "home";
+    }
     window.location.hash = "detail/" + id;
   };
 
@@ -389,6 +420,11 @@
     window.location.hash = "favorites";
   };
 
+  window.goToEditItem = function (id) {
+    editingItemId = id;
+    window.location.hash = "editItem";
+  };
+
   window.goToSettings = function () {
     window.alert("设置功能暂未开放");
   };
@@ -397,10 +433,10 @@
     var view = activeView();
     var route = view ? view.getAttribute("data-route") : "home";
     if (route === "detail") {
-      window.location.hash = "search";
-    } else {
-      window.location.hash = "mine";
+      window.location.hash = detailBackRoute || "home";
+      return;
     }
+    window.location.hash = "mine";
   };
 
   // ===== 发布页 =====
@@ -460,6 +496,32 @@
       };
       reader.readAsDataURL(file);
     });
+    preview.classList.add("show");
+  };
+
+  window.previewEditImage = function (event) {
+    var view = event.target.closest(".view");
+    if (!view) return;
+
+    var file = event.target.files && event.target.files[0];
+    var preview = $("#editImagePreview", view);
+    if (!preview) return;
+
+    preview.innerHTML = "";
+
+    if (!file) {
+      preview.classList.remove("show");
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = document.createElement("img");
+      img.src = e.target.result;
+      img.className = "preview-item";
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
     preview.classList.add("show");
   };
 
@@ -673,6 +735,15 @@
         "标记已归还" +
         "</button>";
     }
+
+    //编辑：点击后可以进入类似发布页的页面对已填写的信息进行增删改
+    actionHtml +=
+      '<button class="edit-item-btn" ' +
+      "onclick=\"event.stopPropagation();goToEditItem('" +
+      id +
+      "')\">" +
+      "编辑" +
+      "</button>";
 
     return (
       '<div class="list-item" ' +
@@ -978,9 +1049,7 @@
     var location = escapeHtml(record.location || "地点未知");
     var time = escapeHtml(record.time || "时间未知");
     var description = escapeHtml(record.description || "暂无描述");
-    var image = escapeHtml(
-      record.image || getItemImage(record.category)
-    );
+    var image = escapeHtml(record.image || getItemImage(record.category));
 
     return (
       '<div class="favorite-card" data-type="' +
@@ -1067,8 +1136,7 @@
       if (allRecords.length === 0) {
         if (emptyTitle) emptyTitle.textContent = "还没有收藏";
         if (emptyText) {
-          emptyText.innerHTML =
-            "浏览失物招领信息时<br />点击 ♥ 就可以收藏啦";
+          emptyText.innerHTML = "浏览失物招领信息时<br />点击 ♥ 就可以收藏啦";
         }
       } else {
         if (emptyTitle) emptyTitle.textContent = "没有符合筛选的收藏";
@@ -1366,6 +1434,226 @@
     renderSearchResults(true);
   };
 
+  // ===== 编辑页 =====
+  window.selectEditType = function (type) {
+    var view = getView("editItem");
+
+    if (!view) {
+      return;
+    }
+
+    var lostBtn = $("#editLostBtn", view);
+    var foundBtn = $("#editFoundBtn", view);
+    var placeLabel = $("#editPlaceLabel", view);
+    var timeLabel = $("#editTimeLabel", view);
+
+    if (type === "found") {
+      lostBtn.classList.remove("active");
+      foundBtn.classList.add("active");
+
+      view.classList.add("found-mode");
+
+      placeLabel.innerHTML = '<span class="required">*</span> 得到地点';
+
+      timeLabel.innerHTML = '<span class="required">*</span> 得到时间';
+    } else {
+      lostBtn.classList.add("active");
+      foundBtn.classList.remove("active");
+
+      view.classList.remove("found-mode");
+
+      placeLabel.innerHTML = '<span class="required">*</span> 丢失地点';
+
+      timeLabel.innerHTML = '<span class="required">*</span> 丢失时间';
+    }
+  };
+
+  function updateEditTypeUI(type) {
+    selectEditType(type === "招领" ? "found" : "lost");
+  }
+
+  window.saveEditItem = function () {
+    var view = getView("editItem");
+    var store = window.LostFoundStore;
+
+    if (!view || !store || !editingItemId) {
+      return;
+    }
+
+    var itemType = $("#editItemType", view);
+    var itemName = $("#editItemName", view);
+    var place = $("#editPlaceInput", view);
+    var date = $("#editDateInput", view);
+    var time = $("#editTimeInput", view);
+    var contact = $("#editContactInput", view);
+    var description = $("#editDescription", view);
+    var imageInput = $("#editImageInput", view);
+
+    var valid =
+      itemType &&
+      itemType.value &&
+      itemName &&
+      itemName.value.trim() &&
+      place &&
+      place.value.trim() &&
+      date &&
+      date.value &&
+      time &&
+      time.value &&
+      contact &&
+      contact.value.trim();
+
+    if (!valid) {
+      alert("请把带 * 的必填信息填写完整");
+      return;
+    }
+
+    var type = view.classList.contains("found-mode") ? "招领" : "寻物";
+
+    var updatedData = {
+      type: type,
+      name: itemName.value.trim(),
+      category: itemType.value,
+      location: place.value.trim(),
+      time: date.value + " " + time.value,
+      description: description ? description.value.trim() : "",
+      contact: contact.value.trim(),
+    };
+
+    function save(image) {
+      updatedData.image = image;
+
+      var result = store.updateItem(editingItemId, updatedData);
+
+      if (!result) {
+        alert("编辑失败，该信息可能已经不存在或不是你发布的");
+        return;
+      }
+
+      // 保存成功后回到原来的“我的”页面
+      if (result.type === "寻物") {
+        detailBackRoute = "myLost";
+        window.location.hash = "myLost";
+      } else {
+        detailBackRoute = "myFound";
+        window.location.hash = "myFound";
+      }
+    }
+
+    // 如果重新选择图片，则使用新图片
+    if (imageInput && imageInput.files && imageInput.files.length > 0) {
+      var reader = new FileReader();
+
+      reader.onload = function (event) {
+        save(event.target.result);
+      };
+
+      reader.onerror = function () {
+        save(store.getItemById(editingItemId).image || "");
+      };
+
+      reader.readAsDataURL(imageInput.files[0]);
+    } else {
+      // 没选新图片，保留原图片
+      var oldItem = store.getItemById(editingItemId);
+      save(oldItem ? oldItem.image || "" : "");
+    }
+  };
+
+  function loadEditItem() {
+    var view = getView("editItem");
+    var store = window.LostFoundStore;
+
+    if (!view || !store || !editingItemId) {
+      return;
+    }
+
+    var item = store.getItemById(editingItemId);
+
+    if (!item) {
+      window.location.hash = "mine";
+      return;
+    }
+
+    // 防止编辑别人发布的信息
+    var currentUserId = store.getCurrentUserId();
+
+    if (item.ownerId !== currentUserId) {
+      window.location.hash = "mine";
+      return;
+    }
+
+    var typeLost = $("#editLostBtn", view);
+    var typeFound = $("#editFoundBtn", view);
+
+    if (item.type === "招领") {
+      typeFound.classList.add("active");
+      typeLost.classList.remove("active");
+      view.classList.add("found-mode");
+    } else {
+      typeLost.classList.add("active");
+      typeFound.classList.remove("active");
+      view.classList.remove("found-mode");
+    }
+
+    var itemType = $("#editItemType", view);
+    var itemName = $("#editItemName", view);
+    var place = $("#editPlaceInput", view);
+    var date = $("#editDateInput", view);
+    var time = $("#editTimeInput", view);
+    var contact = $("#editContactInput", view);
+    var description = $("#editDescription", view);
+    var preview = $("#editImagePreview", view);
+
+    if (itemType) {
+      itemType.value = item.category || "其他";
+    }
+
+    if (itemName) {
+      itemName.value = item.name || "";
+    }
+
+    if (place) {
+      place.value = item.location || "";
+    }
+
+    if (item.time) {
+      var parts = item.time.split(" ");
+
+      if (date) {
+        date.value = parts[0] || "";
+      }
+
+      if (time) {
+        time.value = parts[1] || "";
+      }
+    }
+
+    if (contact) {
+      contact.value = item.contact || "";
+    }
+
+    if (description) {
+      description.value = item.description || "";
+    }
+
+    if (preview) {
+      preview.innerHTML = "";
+
+      if (item.image) {
+        var img = document.createElement("img");
+        img.src = item.image;
+        img.className = "preview-item";
+        preview.appendChild(img);
+        preview.classList.add("show");
+      } else {
+        preview.classList.remove("show");
+      }
+    }
+
+    updateEditTypeUI(item.type);
+  }
+
   // ===== 详情页 =====
   window.toggleMore = function () {
     var view = getView("detail");
@@ -1389,12 +1677,7 @@
     var icon = $("#favoriteIcon", view);
     var text = $("#favoriteText", view);
 
-    updateFavoriteButton(
-      button,
-      icon,
-      text,
-      store.isFavorite(currentDetailId)
-    );
+    updateFavoriteButton(button, icon, text, store.isFavorite(currentDetailId));
   };
 
   function updateFavoriteButton(button, icon, text, isFavorite) {
