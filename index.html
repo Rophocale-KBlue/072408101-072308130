@@ -28,7 +28,8 @@
       <!-- 首页 -->
       <section class="view" id="view-home" data-route="home">
         <div class="view-inner">
-          <div class="hero-section"></div>
+          <div class="hero-section">
+          </div>
 
           <div class="search-section">
             <div class="search-box" onclick="goToSearch()">
@@ -529,7 +530,10 @@
                 返回首页
               </button>
 
-              <button class="secondary-btn" onclick="goToMyPublished()">
+              <button
+                class="secondary-btn"
+                onclick="goToMyPublished()"
+              >
                 查看我的发布
               </button>
             </div>
@@ -942,7 +946,8 @@
             </div>
 
             <!-- 收藏列表 -->
-            <div class="favorite-list" id="favoriteList"></div>
+            <div class="favorite-list" id="favoriteList">
+            </div>
 
             <!-- 空状态 -->
             <div class="empty-state" id="emptyState">

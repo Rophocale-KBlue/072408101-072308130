@@ -395,65 +395,6 @@
     return null;
   }
 
-  function updateItem(id, input) {
-    seedIfNeeded();
-
-    input = input || {};
-
-    var items = readItems();
-
-    for (var i = 0; i < items.length; i++) {
-      if (items[i].id !== id) {
-        continue;
-      }
-
-      // 只能修改自己的记录
-      if (items[i].ownerId !== getCurrentUserId()) {
-        return null;
-      }
-
-      items[i].type = input.type === TYPES.FOUND ? TYPES.FOUND : TYPES.LOST;
-
-      if (input.name !== undefined) {
-        items[i].name = String(input.name).trim();
-      }
-
-      if (input.category !== undefined) {
-        items[i].category =
-          CATEGORIES.indexOf(input.category) !== -1 ? input.category : "其他";
-      }
-
-      if (input.location !== undefined) {
-        items[i].location = String(input.location).trim();
-      }
-
-      if (input.time !== undefined) {
-        items[i].time = String(input.time).trim();
-      }
-
-      if (input.description !== undefined) {
-        items[i].description = String(input.description).trim();
-      }
-
-      if (input.contact !== undefined) {
-        items[i].contact = String(input.contact).trim();
-      }
-
-      if (input.image !== undefined) {
-        items[i].image = input.image || "";
-      }
-
-      writeItems(items);
-
-      // 更新详情页数据
-      buildAppData();
-
-      return items[i];
-    }
-
-    return null;
-  }
-
   // ===== 收藏数据层 =====
   function readFavoriteIds() {
     try {
@@ -517,10 +458,7 @@
       id: record.id,
       type: isFound ? "found" : "lost",
       category: record.category,
-      image:
-        record.image ||
-        CATEGORY_IMAGE[record.category] ||
-        CATEGORY_IMAGE["其他"],
+      image: record.image || CATEGORY_IMAGE[record.category] || CATEGORY_IMAGE["其他"],
       title: record.name,
       location: record.location,
       time: record.time,
@@ -566,7 +504,6 @@
     searchItems: searchItems,
     filterItems: filterItems,
     updateStatus: updateStatus,
-    updateItem: updateItem,
     addFavorite: addFavorite,
     removeFavorite: removeFavorite,
     getFavorites: getFavorites,

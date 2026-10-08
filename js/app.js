@@ -1023,7 +1023,9 @@
     var location = escapeHtml(record.location || "地点未知");
     var time = escapeHtml(record.time || "时间未知");
     var description = escapeHtml(record.description || "暂无描述");
-    var image = escapeHtml(record.image || getItemImage(record.category));
+    var image = escapeHtml(
+      record.image || getItemImage(record.category)
+    );
 
     return (
       '<div class="favorite-card" data-type="' +
@@ -1110,7 +1112,8 @@
       if (allRecords.length === 0) {
         if (emptyTitle) emptyTitle.textContent = "还没有收藏";
         if (emptyText) {
-          emptyText.innerHTML = "浏览失物招领信息时<br />点击 ♥ 就可以收藏啦";
+          emptyText.innerHTML =
+            "浏览失物招领信息时<br />点击 ♥ 就可以收藏啦";
         }
       } else {
         if (emptyTitle) emptyTitle.textContent = "没有符合筛选的收藏";
@@ -1651,7 +1654,12 @@
     var icon = $("#favoriteIcon", view);
     var text = $("#favoriteText", view);
 
-    updateFavoriteButton(button, icon, text, store.isFavorite(currentDetailId));
+    updateFavoriteButton(
+      button,
+      icon,
+      text,
+      store.isFavorite(currentDetailId)
+    );
   };
 
   function updateFavoriteButton(button, icon, text, isFavorite) {
