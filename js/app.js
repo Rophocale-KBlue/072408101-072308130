@@ -425,6 +425,12 @@
     window.location.hash = "editItem";
   };
 
+  window.goToEditCurrentItem = function () {
+    if (currentDetailId) {
+      window.goToEditItem(currentDetailId);
+    }
+  };
+
   window.goToSettings = function () {
     window.alert("设置功能暂未开放");
   };
