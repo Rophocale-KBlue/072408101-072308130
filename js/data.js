@@ -174,6 +174,24 @@
     umbrella: "item4",
   };
 
+  // 获取当前浏览器中的用户 ID
+  function getCurrentUserId() {
+    var key = "campus_lost_found_user_id";
+    var userId = global.localStorage.getItem(key);
+
+    if (!userId) {
+      userId =
+        "user_" +
+        Date.now().toString(36) +
+        "_" +
+        Math.random().toString(36).slice(2, 10);
+
+      global.localStorage.setItem(key, userId);
+    }
+
+    return userId;
+  }
+
   function generateId() {
     return (
       "item_" +
@@ -260,10 +278,9 @@
 
     return {
       id: input.id || generateId(),
-
+      ownerId: input.ownerId || getCurrentUserId(),
       // 发布类型
       type: type,
-
       // 当前发布者
       ownerId: input.ownerId || getCurrentUserId(),
 

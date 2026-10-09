@@ -197,7 +197,281 @@
       favoriteText,
       window.LostFoundStore && window.LostFoundStore.isFavorite(currentDetailId)
     );
+    /*评论功能*/
+    renderDetailComments(currentDetailId);
   }
+
+  // 详情页评论功能
+  var DETAIL_COMMENTS_KEY = "campus_lost_found_comments_v1";
+
+  // 获取当前用户的个人名字，作为评论昵称
+  function getDetailCommentNickname() {
+    try {
+      var userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+
+      return (
+        (userInfo &&
+          typeof userInfo.name === "string" &&
+          userInfo.name.trim()) ||
+        "校园同学"
+      );
+    } catch (error) {
+      return "校园同学";
+    }
+  }
+
+  // 读取所有物品的评论
+  function readAllDetailComments() {
+    try {
+      var raw = localStorage.getItem(DETAIL_COMMENTS_KEY);
+      var data = raw ? JSON.parse(raw) : {};
+
+      return data && typeof data === "object" && !Array.isArray(data)
+        ? data
+        : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  // 保存所有物品的评论
+  function saveAllDetailComments(data) {
+    try {
+      localStorage.setItem(DETAIL_COMMENTS_KEY, JSON.stringify(data));
+      return true;
+    } catch (error) {
+      alert("评论保存失败，请检查浏览器的本地存储空间或设置。");
+      return false;
+    }
+  }
+
+  // 获取时间字符串
+  function getCommentTimeText(date) {
+    var y = date.getFullYear();
+    var m = String(date.getMonth() + 1).padStart(2, "0");
+    var d = String(date.getDate()).padStart(2, "0");
+    var h = String(date.getHours()).padStart(2, "0");
+    var min = String(date.getMinutes()).padStart(2, "0");
+
+    return y + "-" + m + "-" + d + " " + h + ":" + min;
+  }
+
+  // 渲染当前物品的评论
+  function renderDetailComments(itemId) {
+    var view = getView("detail");
+    if (!view || !itemId) return;
+
+    var list = $("#commentList", view);
+    var count = $("#commentCount", view);
+
+    if (!list || !count) return;
+
+    var allComments = readAllDetailComments();
+    var comments = Array.isArray(allComments[itemId])
+      ? allComments[itemId]
+      : [];
+
+    // 获取当前用户 ID 和物品信息
+    var store = window.LostFoundStore;
+    var currentUserId =
+      store && typeof store.getCurrentUserId === "function"
+        ? store.getCurrentUserId()
+        : "";
+
+    var item =
+      store && typeof store.getItemById === "function"
+        ? store.getItemById(itemId)
+        : null;
+
+    // 当前用户是否为这条失物/招领信息的发布者
+    var isItemOwner = !!(
+      item &&
+      currentUserId &&
+      item.ownerId === currentUserId
+    );
+
+    count.textContent = comments.length;
+
+    if (comments.length === 0) {
+      list.innerHTML =
+        '<div class="comment-empty">' +
+        '<span class="comment-empty-icon">💬</span>' +
+        "暂时还没有评论，来发表第一条留言吧！" +
+        "</div>";
+      return;
+    }
+
+    list.innerHTML = comments
+      .slice()
+      .reverse()
+      .map(function (comment) {
+        var nickname = escapeHtml(comment.nickname || "校园同学");
+        var content = escapeHtml(comment.content || "");
+        var time = escapeHtml(comment.time || "");
+
+        /* 只有评论作者本人或当前物品发布者，才显示删除按钮 */
+        var canDelete =
+          !!currentUserId && (comment.userId === currentUserId || isItemOwner);
+
+        var deleteButton = "";
+
+        if (canDelete) {
+          var safeCommentId = String(comment.id)
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'");
+
+          deleteButton =
+            '<button type="button" class="comment-delete"' +
+            " onclick=\"deleteDetailComment('" +
+            safeCommentId +
+            "')\">" +
+            "删除</button>";
+        }
+        return (
+          '<article class="comment-item">' +
+          '<div class="comment-avatar">👤</div>' +
+          '<div class="comment-body">' +
+          '<div class="comment-meta">' +
+          '<span class="comment-author">' +
+          nickname +
+          "</span>" +
+          '<div class="comment-meta-right">' +
+          '<span class="comment-time">' +
+          time +
+          "</span>" +
+          deleteButton +
+          "</div>" +
+          "</div>" +
+          '<div class="comment-text">' +
+          content +
+          "</div>" +
+          "</div>" +
+          "</article>"
+        );
+      })
+      .join("");
+  }
+  // 删除评论
+  window.deleteDetailComment = function (commentId) {
+    if (!currentDetailId || !commentId) return;
+
+    var store = window.LostFoundStore;
+
+    if (
+      !store ||
+      typeof store.getCurrentUserId !== "function" ||
+      typeof store.getItemById !== "function"
+    ) {
+      alert("暂时无法验证删除权限，请刷新页面后重试。");
+      return;
+    }
+
+    var currentUserId = store.getCurrentUserId();
+    var item = store.getItemById(currentDetailId);
+
+    var isItemOwner = !!(item && item.ownerId === currentUserId);
+
+    var allComments = readAllDetailComments();
+    var comments = Array.isArray(allComments[currentDetailId])
+      ? allComments[currentDetailId]
+      : [];
+
+    var target = comments.find(function (comment) {
+      return String(comment.id) === String(commentId);
+    });
+
+    if (!target) {
+      alert("这条评论可能已经被删除，请刷新后重试。");
+      return;
+    }
+
+    // 只有评论作者本人或物品发布者可以删除
+    var isCommentAuthor = target.userId === currentUserId;
+
+    if (!isCommentAuthor && !isItemOwner) {
+      alert("你没有权限删除这条评论。");
+      return;
+    }
+
+    if (!confirm("确定要删除这条评论吗？删除后无法恢复。")) {
+      return;
+    }
+
+    allComments[currentDetailId] = comments.filter(function (comment) {
+      return String(comment.id) !== String(commentId);
+    });
+
+    if (!saveAllDetailComments(allComments)) {
+      return;
+    }
+
+    renderDetailComments(currentDetailId);
+  };
+  // 发表评论
+  window.submitDetailComment = function () {
+    var view = getView("detail");
+    if (!view || !currentDetailId) {
+      alert("暂时无法确定当前物品，请重新打开详情页。");
+      return;
+    }
+
+    var input = $("#commentInput", view);
+
+    if (!input) return;
+
+    var content = input.value.trim();
+
+    // 自动使用“我的”页面保存的个人名字
+    var nickname = getDetailCommentNickname();
+
+    if (!content) {
+      alert("请先输入评论内容。");
+      input.focus();
+      return;
+    }
+
+    if (content.length > 300) {
+      alert("评论内容不能超过 300 字。");
+      return;
+    }
+
+    var allComments = readAllDetailComments();
+
+    if (!Array.isArray(allComments[currentDetailId])) {
+      allComments[currentDetailId] = [];
+    }
+
+    var store = window.LostFoundStore;
+
+    var currentUserId =
+      store && typeof store.getCurrentUserId === "function"
+        ? store.getCurrentUserId()
+        : "";
+
+    if (!currentUserId) {
+      alert("暂时无法识别当前用户，请刷新页面后重试。");
+      return;
+    }
+
+    allComments[currentDetailId].push({
+      id:
+        "comment_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+
+      // 保存评论作者的用户 ID，用于判断删除权限
+      userId: currentUserId,
+
+      nickname: nickname.slice(0, 20),
+      content: content,
+      time: getCommentTimeText(new Date()),
+    });
+
+    // 只有保存成功后才清空输入框
+    if (!saveAllDetailComments(allComments)) {
+      return;
+    }
+    input.value = "";
+    renderDetailComments(currentDetailId);
+  };
 
   function renderHomeList() {
     var lostList = $("#homeLostList");
