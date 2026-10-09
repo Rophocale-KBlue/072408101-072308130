@@ -1186,6 +1186,47 @@
                 💡 温馨提示： 联系对方时请先确认物品特征， 避免个人信息泄露。
               </div>
             </div>
+            <!-- 评论模块：放在 detail-content 后面、detail-scroll 结束标签前 -->
+            <section class="comment-section">
+              <div class="comment-header">
+                <div class="comment-heading">
+                  <span class="comment-heading-icon">💬</span>
+                  <div>
+                    <div class="comment-title">评论交流</div>
+                    <div class="comment-subtitle">
+                      留下线索，让物品尽快找到主人
+                    </div>
+                  </div>
+                </div>
+                <span class="comment-count">
+                  共 <span id="commentCount">0</span> 条
+                </span>
+              </div>
+
+              <!-- 发表评论 -->
+              <div class="comment-form">
+                <textarea
+                  id="commentInput"
+                  class="comment-input"
+                  maxlength="300"
+                  placeholder="请输入你的线索或留言……"
+                ></textarea>
+
+                <div class="comment-form-footer">
+                  <span class="comment-tip">最多 300 字</span>
+                  <button
+                    type="button"
+                    class="comment-submit"
+                    onclick="submitDetailComment()"
+                  >
+                    发表评论
+                  </button>
+                </div>
+              </div>
+
+              <!-- 评论列表由 JavaScript 自动生成 -->
+              <div id="commentList" class="comment-list"></div>
+            </section>
           </div>
 
           <div class="bottom-action">
