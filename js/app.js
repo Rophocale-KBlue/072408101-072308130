@@ -741,6 +741,13 @@
       typeText.innerText = "正在发布招领信息";
       placeLabel.innerHTML = '<span class="required">*</span> 得到地点';
       timeLabel.innerHTML = '<span class="required">*</span> 得到时间';
+      if (statusSelect) {
+        statusSelect.innerHTML =
+          '<option value="进行中">招领中</option>' +
+          '<option value="已归还">已归还</option>';
+        statusSelect.value =
+          previousStatus === "已归还" ? "已归还" : "进行中";
+      }
     } else {
       lostBtn.classList.add("active");
       foundBtn.classList.remove("active");
@@ -1726,30 +1733,56 @@
     var foundBtn = $("#editFoundBtn", view);
     var placeLabel = $("#editPlaceLabel", view);
     var timeLabel = $("#editTimeLabel", view);
+    var statusSelect = $("#editItemStatus", view);
+    var previousStatus = statusSelect ? statusSelect.value : "进行中";
 
     if (type === "found") {
       lostBtn.classList.remove("active");
       foundBtn.classList.add("active");
-
       view.classList.add("found-mode");
 
       placeLabel.innerHTML = '<span class="required">*</span> 得到地点';
-
       timeLabel.innerHTML = '<span class="required">*</span> 得到时间';
+
+      if (statusSelect) {
+        statusSelect.innerHTML =
+          '<option value="进行中">未归还</option>' +
+          '<option value="已归还">已归还</option>';
+        statusSelect.value =
+          previousStatus === "已归还" ? "已归还" : "进行中";
+      }
     } else {
       lostBtn.classList.add("active");
       foundBtn.classList.remove("active");
-
       view.classList.remove("found-mode");
 
       placeLabel.innerHTML = '<span class="required">*</span> 丢失地点';
-
       timeLabel.innerHTML = '<span class="required">*</span> 丢失时间';
+
+      if (statusSelect) {
+        statusSelect.innerHTML =
+          '<option value="进行中">未找到</option>' +
+          '<option value="已找到">已找到</option>';
+        statusSelect.value =
+          previousStatus === "已找到" ? "已找到" : "进行中";
+      }
     }
   };
 
-  function updateEditTypeUI(type) {
+  // 加载已有记录时，按原来的物品类型和状态回显；
+  // 手动切换类型时则调用 selectEditType，让不兼容的状态重置为进行中。
+  function updateEditTypeUI(type, status) {
     selectEditType(type === "招领" ? "found" : "lost");
+
+    var view = getView("editItem");
+    var statusSelect = view ? $("#editItemStatus", view) : null;
+    if (!statusSelect) return;
+
+    if (type === "招领") {
+      statusSelect.value = status === "已归还" ? "已归还" : "进行中";
+    } else {
+      statusSelect.value = status === "已找到" ? "已找到" : "进行中";
+    }
   }
 
   window.saveEditItem = function () {
@@ -1767,6 +1800,7 @@
     var time = $("#editTimeInput", view);
     var contact = $("#editContactInput", view);
     var description = $("#editDescription", view);
+    var statusSelect = $("#editItemStatus", view);
     var imageInput = $("#editImageInput", view);
 
     var valid =
@@ -1798,6 +1832,7 @@
       time: date.value + " " + time.value,
       description: description ? description.value.trim() : "",
       contact: contact.value.trim(),
+      status: statusSelect ? statusSelect.value : "进行中",
     };
 
     function save(image) {
@@ -1931,7 +1966,7 @@
       }
     }
 
-    updateEditTypeUI(item.type);
+    updateEditTypeUI(item.type, item.status);
   }
 
   // ===== 详情页 =====
