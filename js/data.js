@@ -53,6 +53,36 @@
     其他: "images/backpack.jpg",
   };
 
+  function padSeed(value) {
+    return value < 10 ? "0" + value : "" + value;
+  }
+
+  function makeSeedDate(daysAgo, hour, minute) {
+    var date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    date.setHours(hour, minute, 0, 0);
+    return date;
+  }
+
+  function seedTime(daysAgo, hour, minute) {
+    var date = makeSeedDate(daysAgo, hour, minute);
+    return (
+      date.getFullYear() +
+      "-" +
+      padSeed(date.getMonth() + 1) +
+      "-" +
+      padSeed(date.getDate()) +
+      " " +
+      padSeed(date.getHours()) +
+      ":" +
+      padSeed(date.getMinutes())
+    );
+  }
+
+  function seedCreatedAt(daysAgo, hour, minute) {
+    return makeSeedDate(daysAgo, hour, minute).toISOString();
+  }
+
   // 首次打开时写入的种子数据，覆盖所有类别和状态，方便浏览与搜索测试。
   var SEED_ITEMS = [
     {
@@ -61,13 +91,13 @@
       name: "蓝色校园卡",
       category: "校园卡",
       location: "图书馆三楼",
-      time: "2026-09-28 14:30",
+      time: seedTime(0, 14, 30),
       description: "蓝色校园卡，卡面为蓝色，可能在图书馆三楼学习时不小心遗失。",
       contact: "138****5678",
       image: "",
       status: STATUSES.ACTIVE,
       secret: "123456",
-      createdAt: "2026-09-28T06:30:00.000Z",
+      createdAt: seedCreatedAt(0, 14, 30),
     },
     {
       id: "item2",
@@ -75,13 +105,13 @@
       name: "一串黑色钥匙",
       category: "钥匙",
       location: "学习中心四楼",
-      time: "2026-09-28 09:15",
+      time: seedTime(2, 9, 15),
       description: "捡到一串黑色钥匙，带有一个小熊挂件，请失主看到后联系确认。",
       contact: "138****1111",
       image: "",
       status: STATUSES.ACTIVE,
       secret: "234567",
-      createdAt: "2026-09-28T01:15:00.000Z",
+      createdAt: seedCreatedAt(2, 9, 15),
     },
     {
       id: "item3",
@@ -89,14 +119,14 @@
       name: "深蓝色保温杯",
       category: "水杯",
       location: "东3-303",
-      time: "2026-09-27 18:40",
+      time: seedTime(5, 18, 40),
       description:
         "深蓝色保温杯，杯身底部有一处轻微划痕，下课后可能落在东3-303教室。",
       contact: "138****2222",
       image: "",
       status: STATUSES.FOUND,
       secret: "345678",
-      createdAt: "2026-09-27T10:40:00.000Z",
+      createdAt: seedCreatedAt(5, 18, 40),
     },
     {
       id: "item4",
@@ -104,14 +134,14 @@
       name: "黑色长柄雨伞",
       category: "雨伞",
       location: "玫瑰园食堂",
-      time: "2026-09-27 12:20",
+      time: seedTime(6, 12, 20),
       description:
         "在玫瑰园食堂座位旁捡到一把黑色长柄雨伞，请失主携带特征说明前来认领。",
       contact: "138****3333",
       image: "",
       status: STATUSES.RETURNED,
       secret: "456789",
-      createdAt: "2026-09-27T04:20:00.000Z",
+      createdAt: seedCreatedAt(6, 12, 20),
     },
     {
       id: "item5",
@@ -119,14 +149,14 @@
       name: "白色无线耳机",
       category: "耳机",
       location: "学习中心四楼",
-      time: "2026-09-26 20:10",
+      time: seedTime(10, 20, 10),
       description:
         "白色入耳式无线耳机，装在一个小收纳盒里，晚上自习时可能遗落在学习中心四楼。",
       contact: "138****4444",
       image: "",
       status: STATUSES.ACTIVE,
       secret: "567890",
-      createdAt: "2026-09-26T12:10:00.000Z",
+      createdAt: seedCreatedAt(10, 20, 10),
     },
     {
       id: "item6",
@@ -134,14 +164,14 @@
       name: "《大学英语》教材",
       category: "书籍",
       location: "西3-103",
-      time: "2026-09-26 15:05",
+      time: seedTime(18, 15, 5),
       description:
         "在西3-103教室捡到一本《大学英语》教材，扉页有手写笔记，请失主联系取回。",
       contact: "138****5555",
       image: "",
       status: STATUSES.ACTIVE,
       secret: "678901",
-      createdAt: "2026-09-26T07:05:00.000Z",
+      createdAt: seedCreatedAt(18, 15, 5),
     },
     {
       id: "item7",
@@ -149,14 +179,14 @@
       name: "黑色双肩背包",
       category: "其他",
       location: "图书馆三楼",
-      time: "2026-09-26 08:50",
+      time: seedTime(27, 8, 50),
       description:
         "黑色双肩背包，外侧口袋有一个钥匙扣，可能在图书馆三楼阅览区遗忘。",
       contact: "138****6666",
       image: "",
       status: STATUSES.ACTIVE,
       secret: "789012",
-      createdAt: "2026-09-26T00:50:00.000Z",
+      createdAt: seedCreatedAt(27, 8, 50),
     },
   ];
 
@@ -257,6 +287,34 @@
     try {
       if (global.localStorage.getItem(STORAGE_KEY) === null) {
         writeItems(clone(SEED_ITEMS));
+        return;
+      }
+
+      // 已有旧数据时，同步示例记录的时间，使其始终相对当前日期均匀分布，
+      // 同时保留用户自己发布、编辑和状态变更的数据。
+      var items = readItems();
+      var changed = false;
+
+      items.forEach(function (item) {
+        var seed = null;
+        for (var i = 0; i < SEED_ITEMS.length; i++) {
+          if (SEED_ITEMS[i].id === item.id) {
+            seed = SEED_ITEMS[i];
+            break;
+          }
+        }
+
+        if (seed) {
+          if (item.time !== seed.time || item.createdAt !== seed.createdAt) {
+            item.time = seed.time;
+            item.createdAt = seed.createdAt;
+            changed = true;
+          }
+        }
+      });
+
+      if (changed) {
+        writeItems(items);
       }
     } catch (error) {
       // 存储不可用时，数据层仍可回退到内存种子数据。
