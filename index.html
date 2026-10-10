@@ -264,12 +264,7 @@
                 <div class="image-preview" id="imagePreview"></div>
               </div>
 
-              <button
-                class="publish-btn"
-                onclick="publishInfo()"
-                contenteditable="true"
-                style="opacity: 1"
-              >
+              <button type="button" class="publish-btn" onclick="publishInfo()">
                 点击发布
               </button>
             </div>
@@ -418,7 +413,16 @@
               <div class="image-preview" id="editImagePreview"></div>
             </div>
 
-            <button class="publish-btn" onclick="saveEditItem()">
+            <!-- 物品状态 -->
+            <div class="form-group edit-status-group">
+              <label class="form-label" for="editItemStatus">物品状态</label>
+              <select id="editItemStatus" class="input-box">
+                <option value="进行中">未找到</option>
+                <option value="已找到">已找到</option>
+              </select>
+            </div>
+
+            <button type="button" class="publish-btn" onclick="saveEditItem()">
               保存修改
             </button>
           </div>
@@ -823,7 +827,20 @@
       <section class="view" id="view-search" data-route="search">
         <div class="view-inner">
           <div class="page-header">
-            <div class="page-title">搜索物品</div>
+            <div class="search-page-heading">
+              <button
+                type="button"
+                class="search-back-btn"
+                onclick="window.location.hash='home'"
+                aria-label="返回首页"
+                title="返回首页"
+              >
+                ←
+              </button>
+
+              <div class="page-title">搜索物品</div>
+            </div>
+
             <div class="page-subtitle">
               可按物品名称、地点、时间、物品类型搜索校园失物信息
             </div>

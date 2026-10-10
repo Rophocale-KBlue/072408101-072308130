@@ -2218,6 +2218,44 @@ body {
 
   flex-shrink: 0;
 }
+
+/* 搜索页返回按钮 */
+.search-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* 返回首页按钮 */
+.search-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: #243b64;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.search-back-btn:hover {
+  background: #34517f;
+  transform: translateY(-1px);
+}
+
+.search-back-btn:active {
+  transform: scale(0.97);
+}
+
 /* =========================
    搜索页：筛选条件
 ========================= */
@@ -5005,3 +5043,22 @@ button {
 #view-home #homeFoundList > *:hover {
   box-shadow: inset -7px -7px 0 #7298c2;
 }*/
+
+
+/* ===== 编辑页：物品状态选择 ===== */
+#view-editItem .edit-status-group {
+  padding: 14px;
+  margin-top: 2px;
+  border: 1px solid #e3eaf3;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.82);
+}
+#view-editItem .edit-status-group .input-box {
+  cursor: pointer;
+}
+#view-editItem .edit-status-hint {
+  margin-top: 7px;
+  color: #8798ad;
+  font-size: 11px;
+  line-height: 1.6;
+}

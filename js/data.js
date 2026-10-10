@@ -518,6 +518,24 @@
         items[i].image = input.image || "";
       }
 
+      if (input.status !== undefined) {
+        if (STATUS_VALUES.indexOf(input.status) === -1) {
+          return null;
+        }
+        // 寻物只允许“进行中/已找到”，招领只允许“进行中/已归还”
+        if (
+          (items[i].type === TYPES.LOST &&
+            input.status !== STATUSES.ACTIVE &&
+            input.status !== STATUSES.FOUND) ||
+          (items[i].type === TYPES.FOUND &&
+            input.status !== STATUSES.ACTIVE &&
+            input.status !== STATUSES.RETURNED)
+        ) {
+          return null;
+        }
+        items[i].status = input.status;
+      }
+
       writeItems(items);
 
       // 更新详情页数据
